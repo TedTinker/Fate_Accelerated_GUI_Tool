@@ -84,12 +84,10 @@ while is_running:
                                                                 initial_window_position[1] + (len(windows) + i) * window_offset),
                                                     label=data.get('label', 'Character')))
                     elif label == 'Obstacle':
-                        window = ObstacleWindow(manager, name=data.get('name', 'name'),
+                        windows.append(ObstacleWindow(manager, name=data.get('name', 'name'),
                                                 position=(initial_window_position[0] + (len(windows) + i) * window_offset,
                                                         initial_window_position[1] + (len(windows) + i) * window_offset),
-                                                label=data.get('label', 'Obstacle'))
-                        window.load(data)
-                        windows.append(window)
+                                                label=data.get('label', 'Obstacle')))
                     elif label == 'Zone':
                         windows.append(ZoneWindow(manager, name=data.get('name', 'name'),
                                                 position=(initial_window_position[0] + (len(windows) + i) * window_offset,
