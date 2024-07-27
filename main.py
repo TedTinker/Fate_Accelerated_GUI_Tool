@@ -5,6 +5,8 @@ import os
 from custom_window import CustomWindow
 from file_utils import select_files
 from ui_elements import create_ui_elements
+from custom_windows import CharacterWindow, ObstacleWindow, ZoneWindow
+
 
 pygame.init()
 
@@ -36,17 +38,38 @@ while is_running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             is_running = False
+            
+            
+            
         if event.type == pygame.VIDEORESIZE:
             window_surface = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
             background = pygame.Surface((event.w, event.h))
             background.fill(pygame.Color('#000000'))
             manager.set_window_resolution((event.w, event.h))
+            
+            
+            
         if event.type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED:
             if event.ui_element == dropdown_menu:
                 label = event.text.replace('New ', '')
-                windows.append(CustomWindow(manager, label=label,
+                if label == 'Character':
+                    windows.append(CharacterWindow(manager, label=label,
+                                                position=(initial_window_position[0] + len(windows) * window_offset,
+                                                            initial_window_position[1] + len(windows) * window_offset)))
+                elif label == 'Obstacle':
+                    windows.append(ObstacleWindow(manager, label=label,
+                                                position=(initial_window_position[0] + len(windows) * window_offset,
+                                                            initial_window_position[1] + len(windows) * window_offset)))
+                elif label == 'Zone':
+                    windows.append(ZoneWindow(manager, label=label,
                                             position=(initial_window_position[0] + len(windows) * window_offset,
-                                                      initial_window_position[1] + len(windows) * window_offset)))
+                                                        initial_window_position[1] + len(windows) * window_offset)))
+                
+                
+                
+                
+                
+                
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
             if event.ui_element == load_button:
                 file_paths = select_files()
