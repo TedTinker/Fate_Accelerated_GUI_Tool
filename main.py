@@ -5,7 +5,9 @@ import os
 from custom_window import CustomWindow
 from file_utils import select_files
 from ui_elements import create_ui_elements
-from custom_windows import CharacterWindow, ObstacleWindow, ZoneWindow
+from character_window import CharacterWindow
+from obstacle_window import ObstacleWindow
+from zone_window import ZoneWindow
 
 
 pygame.init()
@@ -75,10 +77,25 @@ while is_running:
                 file_paths = select_files()
                 for i, file_path in enumerate(file_paths):
                     data = CustomWindow.load_data(file_path)
-                    windows.append(CustomWindow(manager, name=data.get('name', 'name'),
+                    label = data.get('label', 'Label')
+                    if label == 'Character':
+                        windows.append(CharacterWindow(manager, name=data.get('name', 'name'),
+                                                    position=(initial_window_position[0] + (len(windows) + i) * window_offset,
+                                                                initial_window_position[1] + (len(windows) + i) * window_offset),
+                                                    label=data.get('label', 'Character')))
+                    elif label == 'Obstacle':
+                        window = ObstacleWindow(manager, name=data.get('name', 'name'),
                                                 position=(initial_window_position[0] + (len(windows) + i) * window_offset,
-                                                          initial_window_position[1] + (len(windows) + i) * window_offset),
-                                                label=data.get('label', 'Label')))
+                                                        initial_window_position[1] + (len(windows) + i) * window_offset),
+                                                label=data.get('label', 'Obstacle'))
+                        window.load(data)
+                        windows.append(window)
+                    elif label == 'Zone':
+                        windows.append(ZoneWindow(manager, name=data.get('name', 'name'),
+                                                position=(initial_window_position[0] + (len(windows) + i) * window_offset,
+                                                            initial_window_position[1] + (len(windows) + i) * window_offset),
+                                                label=data.get('label', 'Zone')))
+            
             elif event.ui_element == save_all_button:
                 for window in windows:
                     if not window.is_closed:
@@ -97,3 +114,5 @@ while is_running:
     pygame.display.update()
 
 pygame.quit()
+
+# %%
