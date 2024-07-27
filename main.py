@@ -17,7 +17,7 @@ background = pygame.Surface((800, 600))
 background.fill(pygame.Color('#000000'))
 
 # Create UI elements
-new_button, load_button, save_all_button = create_ui_elements(manager)
+dropdown_menu, load_button, save_all_button = create_ui_elements(manager)
 
 # Create the directory for saved windows
 os.makedirs("saved", exist_ok=True)
@@ -41,17 +41,21 @@ while is_running:
             background = pygame.Surface((event.w, event.h))
             background.fill(pygame.Color('#000000'))
             manager.set_window_resolution((event.w, event.h))
+        if event.type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED:
+            if event.ui_element == dropdown_menu:
+                label = event.text.replace('New ', '')
+                windows.append(CustomWindow(manager, label=label,
+                                            position=(initial_window_position[0] + len(windows) * window_offset,
+                                                      initial_window_position[1] + len(windows) * window_offset)))
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
-            if event.ui_element == new_button:
-                windows.append(CustomWindow(manager, position=(initial_window_position[0] + len(windows) * window_offset,
-                                                               initial_window_position[1] + len(windows) * window_offset)))
-            elif event.ui_element == load_button:
+            if event.ui_element == load_button:
                 file_paths = select_files()
                 for i, file_path in enumerate(file_paths):
                     data = CustomWindow.load_data(file_path)
-                    windows.append(CustomWindow(manager, name=data.get('name', 'Unnamed Window'),
+                    windows.append(CustomWindow(manager, name=data.get('name', 'name'),
                                                 position=(initial_window_position[0] + (len(windows) + i) * window_offset,
-                                                          initial_window_position[1] + (len(windows) + i) * window_offset)))
+                                                          initial_window_position[1] + (len(windows) + i) * window_offset),
+                                                label=data.get('label', 'Label')))
             elif event.ui_element == save_all_button:
                 for window in windows:
                     if not window.is_closed:
@@ -70,5 +74,3 @@ while is_running:
     pygame.display.update()
 
 pygame.quit()
-
-# %%

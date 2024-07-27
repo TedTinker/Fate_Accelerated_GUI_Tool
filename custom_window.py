@@ -6,7 +6,7 @@ import json
 RESIZE_MARGIN = 10
 
 class CustomWindow:
-    def __init__(self, manager, name="Name", position=(100, 100), size=(300, 200)):
+    def __init__(self, manager, name="name", label="Label", position=(100, 100), size=(300, 200)):
         self.manager = manager
         self.window_rect = pygame.Rect(position, size)
         self.is_minimized = False
@@ -15,24 +15,29 @@ class CustomWindow:
         self.is_resizing = False
         self.resize_dir = None
         self.name = name
+        self.label = label
         self.create_window_elements()
 
     def create_window_elements(self):
         self.window_panel = pygame_gui.elements.UIPanel(relative_rect=self.window_rect,
                                                         manager=self.manager)
-        self.name_label = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((10, 10), (50, 30)),
+        self.label_element = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((10, 10), (100, 30)),
+                                                         text=self.label,
+                                                         container=self.window_panel,
+                                                         manager=self.manager)
+        self.name_label = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((10, 50), (50, 30)),
                                                       text="Name:",
                                                       container=self.window_panel,
                                                       manager=self.manager)
-        self.name_entry = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((70, 10), (220, 30)),
+        self.name_entry = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((70, 50), (220, 30)),
                                                               container=self.window_panel,
                                                               manager=self.manager)
         self.name_entry.set_text(self.name)
-        self.save_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((10, 50), (100, 30)),
+        self.save_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((10, 90), (100, 30)),
                                                         text="Save",
                                                         container=self.window_panel,
                                                         manager=self.manager)
-        self.close_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((120, 50), (100, 30)),
+        self.close_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((120, 90), (100, 30)),
                                                          text="Close",
                                                          container=self.window_panel,
                                                          manager=self.manager)
@@ -119,7 +124,7 @@ class CustomWindow:
         self.window_panel.set_dimensions((self.window_rect.width, self.window_rect.height))
 
     def save(self):
-        data = {'name': self.name_entry.get_text()}
+        data = {'name': self.name_entry.get_text(), 'label': self.label}
         with open(f"saved/{self.name_entry.get_text()}.json", 'w') as f:
             json.dump(data, f)
 
