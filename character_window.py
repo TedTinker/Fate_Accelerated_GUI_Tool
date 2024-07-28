@@ -146,6 +146,8 @@ class CharacterWindow(CustomWindow):
         data = {
             'name': self.name_entry.get_text(),
             'label': self.label,
+            'fate': self.fate_entry.get_text(),  # Save fate value
+            'refresh': self.refresh_entry.get_text(),  # Save refresh value
             'rows': [(label.text if label else "", entry.get_text()) for label, entry, _ in self.rows],
             'six_inputs': [entry.get_text() for _, entry in self.six_inputs],
             'additional_rows': [entry.get_text() for entry, _ in self.additional_rows]
@@ -156,6 +158,8 @@ class CharacterWindow(CustomWindow):
     def load(self, data):
         self.name_entry.set_text(data['name'])
         self.label = data['label']
+        self.fate_entry.set_text(data.get('fate', '3'))  # Load fate value
+        self.refresh_entry.set_text(data.get('refresh', '3'))  # Load refresh value
         self.clear_rows()
         for row in data['rows']:
             label_text, entry_text = row
@@ -169,6 +173,7 @@ class CharacterWindow(CustomWindow):
         for entry_text in data['additional_rows']:
             self.add_additional_row(entry_text)
         self.update_positions()
+
 
     def clear_rows(self):
         while self.rows:
@@ -194,3 +199,51 @@ class CharacterWindow(CustomWindow):
             remove_button.show()
         self.new_aspect_button.show()
         self.new_stunt_button.show()
+
+
+
+    def create_window_elements(self):
+        self.window_panel = pygame_gui.elements.UIPanel(relative_rect=self.window_rect,
+                                                        manager=self.manager)
+        self.label_element = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((10, 10), (100, 30)),
+                                                        text=self.label,
+                                                        container=self.window_panel,
+                                                        manager=self.manager)
+        self.save_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((120, 10), (100, 30)),
+                                                        text="Save",
+                                                        container=self.window_panel,
+                                                        manager=self.manager)
+        self.close_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((230, 10), (100, 30)),
+                                                        text="Close",
+                                                        container=self.window_panel,
+                                                        manager=self.manager)
+        self.name_label = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((10, 50), (50, 30)),
+                                                    text="Name:",
+                                                    container=self.window_panel,
+                                                    manager=self.manager)
+        self.name_entry = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((70, 50), (120, 30)),
+                                                            container=self.window_panel,
+                                                            manager=self.manager)
+        self.name_entry.set_text(self.name)
+        
+        # Add Fate and Refresh labels and text inputs
+        self.fate_label = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((200, 50), (50, 30)),
+                                                    text="Fate:",
+                                                    container=self.window_panel,
+                                                    manager=self.manager)
+        self.fate_entry = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((250, 50), (50, 30)),
+                                                            container=self.window_panel,
+                                                            manager=self.manager)
+        self.fate_entry.set_text("3")
+        
+        self.refresh_label = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((310, 50), (70, 30)),
+                                                        text="Refresh:",
+                                                        container=self.window_panel,
+                                                        manager=self.manager)
+        self.refresh_entry = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((380, 50), (50, 30)),
+                                                                container=self.window_panel,
+                                                                manager=self.manager)
+        self.refresh_entry.set_text("3")
+
+
+
