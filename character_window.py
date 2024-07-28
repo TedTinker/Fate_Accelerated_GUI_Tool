@@ -116,15 +116,15 @@ class CharacterWindow(CustomWindow):
             label.set_relative_position((x_position, six_inputs_y))
             entry.set_relative_position((x_position, six_inputs_y + 30))
         
-        # Set the position of the "New Stunt" button under the "Careful" text input
-        self.new_stunt_button.set_position((10, six_inputs_y + 70))
+        # Correct the position of the "New Stunt" button
+        self.new_stunt_button.set_position((110, six_inputs_y + 170))
 
         additional_rows_y = six_inputs_y + 110  # Adjust this value as needed
         for i, (entry, remove_button) in enumerate(self.additional_rows):
             y_position = additional_rows_y + i * 40
             entry.set_relative_position((10, y_position))
             remove_button.set_relative_position((320, y_position))
-        
+            
     def handle_event(self, event):
         super().handle_event(event)
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
