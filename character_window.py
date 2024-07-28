@@ -9,12 +9,12 @@ class CharacterWindow(CustomWindow):
         self.rows = []
         self.additional_rows = []
         self.six_inputs = []  # Initialize six_inputs here
-        self.new_row_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((10, 90), (100, 30)),
-                                                           text="New Row",
+        self.new_aspect_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((10, 90), (100, 30)),
+                                                           text="New Aspect",
                                                            container=self.window_panel,
                                                            manager=self.manager)
-        self.additional_new_row_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((10, 0), (100, 30)),
-                                                                      text="New Row",
+        self.new_stunt_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((10, 0), (100, 30)),
+                                                                      text="New Stunt",
                                                                       container=self.window_panel,
                                                                       manager=self.manager)
         self.add_initial_rows()
@@ -116,20 +116,21 @@ class CharacterWindow(CustomWindow):
             label.set_relative_position((x_position, six_inputs_y))
             entry.set_relative_position((x_position, six_inputs_y + 30))
         
-        additional_rows_y = six_inputs_y + 70
+        # Set the position of the "New Stunt" button under the "Careful" text input
+        self.new_stunt_button.set_position((10, six_inputs_y + 70))
+
+        additional_rows_y = six_inputs_y + 110  # Adjust this value as needed
         for i, (entry, remove_button) in enumerate(self.additional_rows):
             y_position = additional_rows_y + i * 40
             entry.set_relative_position((10, y_position))
             remove_button.set_relative_position((320, y_position))
         
-        self.additional_new_row_button.set_position((10, additional_rows_y + len(self.additional_rows) * 40))
-
     def handle_event(self, event):
         super().handle_event(event)
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
-            if event.ui_element == self.new_row_button:
+            if event.ui_element == self.new_aspect_button:
                 self.add_row()
-            elif event.ui_element == self.additional_new_row_button:
+            elif event.ui_element == self.new_stunt_button:
                 self.add_additional_row()
             else:
                 for i, (_, _, remove_button) in enumerate(self.rows):
@@ -191,5 +192,5 @@ class CharacterWindow(CustomWindow):
         for entry, remove_button in self.additional_rows:
             entry.show()
             remove_button.show()
-        self.new_row_button.show()
-        self.additional_new_row_button.show()
+        self.new_aspect_button.show()
+        self.new_stunt_button.show()
