@@ -22,25 +22,25 @@ class CustomWindow:
         self.window_panel = pygame_gui.elements.UIPanel(relative_rect=self.window_rect,
                                                         manager=self.manager)
         self.label_element = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((10, 10), (100, 30)),
-                                                         text=self.label,
-                                                         container=self.window_panel,
-                                                         manager=self.manager)
-        self.name_label = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((10, 50), (50, 30)),
-                                                      text="Name:",
-                                                      container=self.window_panel,
-                                                      manager=self.manager)
-        self.name_entry = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((70, 50), (220, 30)),
-                                                              container=self.window_panel,
-                                                              manager=self.manager)
-        self.name_entry.set_text(self.name)
-        self.save_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((10, 90), (100, 30)),
+                                                        text=self.label,
+                                                        container=self.window_panel,
+                                                        manager=self.manager)
+        self.save_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((120, 10), (100, 30)),
                                                         text="Save",
                                                         container=self.window_panel,
                                                         manager=self.manager)
-        self.close_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((120, 90), (100, 30)),
-                                                         text="Close",
-                                                         container=self.window_panel,
-                                                         manager=self.manager)
+        self.close_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((230, 10), (100, 30)),
+                                                        text="Close",
+                                                        container=self.window_panel,
+                                                        manager=self.manager)
+        self.name_label = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((10, 50), (50, 30)),
+                                                    text="Name:",
+                                                    container=self.window_panel,
+                                                    manager=self.manager)
+        self.name_entry = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((70, 50), (220, 30)),
+                                                            container=self.window_panel,
+                                                            manager=self.manager)
+        self.name_entry.set_text(self.name)
 
     def handle_event(self, event):
         if event.type == pygame_gui.UI_BUTTON_PRESSED:

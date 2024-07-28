@@ -69,9 +69,6 @@ while is_running:
                 
                 
                 
-                
-                
-                
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
             if event.ui_element == load_button:
                 file_paths = select_files()
@@ -79,20 +76,14 @@ while is_running:
                     data = CustomWindow.load_data(file_path)
                     label = data.get('label', 'Label')
                     if label == 'Character':
-                        windows.append(CharacterWindow(manager, name=data.get('name', 'name'),
-                                                    position=(initial_window_position[0] + (len(windows) + i) * window_offset,
-                                                                initial_window_position[1] + (len(windows) + i) * window_offset),
-                                                    label=data.get('label', 'Character')))
+                        window = CharacterWindow(manager, name=data.get('name', 'name'))
                     elif label == 'Obstacle':
-                        windows.append(ObstacleWindow(manager, name=data.get('name', 'name'),
-                                                position=(initial_window_position[0] + (len(windows) + i) * window_offset,
-                                                        initial_window_position[1] + (len(windows) + i) * window_offset),
-                                                label=data.get('label', 'Obstacle')))
+                        window = ObstacleWindow(manager, name=data.get('name', 'name'))
                     elif label == 'Zone':
-                        windows.append(ZoneWindow(manager, name=data.get('name', 'name'),
-                                                position=(initial_window_position[0] + (len(windows) + i) * window_offset,
-                                                            initial_window_position[1] + (len(windows) + i) * window_offset),
-                                                label=data.get('label', 'Zone')))
+                        window = ZoneWindow(manager, name=data.get('name', 'name'))
+                    
+                    window.load(data)
+                    windows.append(window)
             
             elif event.ui_element == save_all_button:
                 for window in windows:
