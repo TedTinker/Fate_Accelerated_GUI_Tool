@@ -1,6 +1,7 @@
 import os
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QWidget, QComboBox, QMessageBox, QMdiSubWindow, QTextEdit
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QWidget, QComboBox, QMessageBox, QMdiSubWindow, QTextEdit, QFileDialog, QLabel
+from PyQt5.QtCore import Qt, QTimer, pyqtSlot
+from PyQt5.QtGui import QPixmap
 from default_window import DefaultWindow, button_style
 from character_window import CharacterWindow
 from obstacle_window import ObstacleWindow
@@ -20,12 +21,35 @@ class ZoneWindow(DefaultWindow):
         self.rows_layout = QVBoxLayout()
         self.layout.addLayout(self.rows_layout)
 
+        # Ensure only one instance of the toggle button and notes/image layout
+        self.notes_toggle_button.setParent(None)
+        self.notes_image_layout.setParent(None)
+        
+        # Add the toggle button and notes/image layout at the bottom
+        self.layout.addWidget(self.notes_toggle_button)
+        self.layout.addLayout(self.notes_image_layout)
+
         self.update_dropdown()
         self.start_timer()
 
-        # Position the toggle button and notes input correctly
-        self.layout.addWidget(self.notes_toggle_button)
-        self.layout.addWidget(self.notes_input)
+        self.image_path = ""
+
+    def toggle_notes(self):
+        visible = not self.notes_input.isVisible()
+        self.notes_input.setVisible(visible)
+        self.image_label.setVisible(visible)
+        self.choose_image_button.setVisible(visible)
+        self.notes_toggle_button.setText('Hide Notes and Image' if visible else 'Show Notes and Image')
+
+    @pyqtSlot()
+    def choose_image(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        file_path, _ = QFileDialog.getOpenFileName(self, "Select Image", "pictures", "Image Files (*.png *.jpg *.bmp);;All Files (*)", options=options)
+        if file_path:
+            self.image_path = file_path
+            pixmap = QPixmap(file_path)
+            self.image_label.setPixmap(pixmap.scaled(100, 100, Qt.KeepAspectRatio))
 
     def start_timer(self):
         self.timer = QTimer(self)
@@ -116,6 +140,7 @@ class ZoneWindow(DefaultWindow):
                     name_label = row_widget.layout().itemAt(0).widget()
                     file.write(f"{name_label.text()}\n")
             file.write(f"Notes: {self.notes_input.toPlainText()}\n")
+            file.write(f"ImagePath: {self.image_path}\n")
         
         if not suppress_message:
             QMessageBox.information(self, 'Info', f'Contents saved to {name}.txt')
@@ -124,12 +149,16 @@ class ZoneWindow(DefaultWindow):
         with open(file_path, 'r') as file:
             lines = file.readlines()
             self.name_input.setText(lines[1].split(": ")[1].strip())
-            for line in lines[2:-1]:
+            for line in lines[2:-2]:
                 window_name = line.strip()
                 if not self.is_window_open(window_name):
                     self.load_window(window_name)
                 self.add_row(window_name)
-            self.notes_input.setPlainText(lines[-1].split(": ", 1)[1].strip())
+            self.notes_input.setPlainText(lines[-2].split(": ", 1)[1].strip())
+            self.image_path = lines[-1].split(": ", 1)[1].strip()
+            if self.image_path:
+                pixmap = QPixmap(self.image_path)
+                self.image_label.setPixmap(pixmap.scaled(100, 100, Qt.KeepAspectRatio))
 
     def is_window_open(self, window_name):
         return any(window.widget().name_input.text() == window_name for window in self.mdi_area.subWindowList())

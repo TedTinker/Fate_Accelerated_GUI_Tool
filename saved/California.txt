@@ -1,5 +1,0 @@
-WindowType: ZoneWindow
-Name: California
-Marathon
-Ted
-Notes: HI

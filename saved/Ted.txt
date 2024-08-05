@@ -1,6 +1,6 @@
 WindowType: CharacterWindow
 Name: Ted
-Fate Points: 3asdf
+Fate Points: 3
 Refresh: 3
 Careful: 0
 Clever: 0
@@ -10,4 +10,5 @@ Quick: 0
 Sneaky: 0
 High Concept: 
 Trouble: 
-Notes: adsfdsa
+Notes: asdfdsa
+ImagePath: /home/ted/Desktop/fate_device/pictures/happy_face.jpg

@@ -1,5 +1,7 @@
 import os 
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QWidget, QMessageBox, QTextEdit
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QWidget, QMessageBox, QTextEdit, QFileDialog
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import Qt, pyqtSlot
 from default_window import DefaultWindow, button_style
 
 class CharacterWindow(DefaultWindow):
@@ -102,9 +104,13 @@ class CharacterWindow(DefaultWindow):
         self.add_stunt_button.clicked.connect(self.add_stunt)
         stunts_layout.addWidget(self.add_stunt_button)
         
+        # Ensure only one instance of the toggle button and notes/image layout
+        self.notes_toggle_button.setParent(None)
+        self.notes_image_layout.setParent(None)
+
         # Position the toggle button and notes input correctly
         self.layout.addWidget(self.notes_toggle_button)
-        self.layout.addWidget(self.notes_input)
+        self.layout.addLayout(self.notes_image_layout)
 
     def add_aspect(self):
         aspect_layout = QHBoxLayout()
@@ -146,6 +152,23 @@ class CharacterWindow(DefaultWindow):
                 widget.setParent(None)
         self.stunts_list_layout.removeItem(stunt_layout)
 
+    def toggle_notes(self):
+        visible = not self.notes_input.isVisible()
+        self.notes_input.setVisible(visible)
+        self.image_label.setVisible(visible)
+        self.choose_image_button.setVisible(visible)
+        self.notes_toggle_button.setText('Hide Notes and Image' if visible else 'Show Notes and Image')
+
+    @pyqtSlot()
+    def choose_image(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        file_path, _ = QFileDialog.getOpenFileName(self, "Select Image", "pictures", "Image Files (*.png *.jpg *.bmp);;All Files (*)", options=options)
+        if file_path:
+            self.image_path = file_path
+            pixmap = QPixmap(file_path)
+            self.image_label.setPixmap(pixmap.scaled(100, 100, Qt.KeepAspectRatio))
+
     def save_contents(self, suppress_message=False):
         name = self.name_input.text()
         if not name:
@@ -183,6 +206,7 @@ class CharacterWindow(DefaultWindow):
                     file.write(f"Stunt: {stunt_input.text()}\n")
 
             file.write(f"Notes: {self.notes_input.toPlainText()}\n")
+            file.write(f"ImagePath: {self.image_path}\n")
         
         if not suppress_message:
             QMessageBox.information(self, 'Info', f'Contents saved to {name}.txt')
@@ -206,7 +230,7 @@ class CharacterWindow(DefaultWindow):
             self.high_concept_input.setText(lines[10].split(": ")[1].strip())
             self.trouble_input.setText(lines[11].split(": ")[1].strip())
             
-            for line in lines[12:-1]:
+            for line in lines[12:-2]:
                 if line.startswith("Aspect:"):
                     aspect_text = line.split(": ")[1].strip()
                     self.add_aspect_with_text(aspect_text)
@@ -214,7 +238,11 @@ class CharacterWindow(DefaultWindow):
                     stunt_text = line.split(": ")[1].strip()
                     self.add_stunt_with_text(stunt_text)
 
-            self.notes_input.setPlainText(lines[-1].split(": ", 1)[1].strip())
+            self.notes_input.setPlainText(lines[-2].split(": ", 1)[1].strip())
+            self.image_path = lines[-1].split(": ", 1)[1].strip()
+            if self.image_path:
+                pixmap = QPixmap(self.image_path)
+                self.image_label.setPixmap(pixmap.scaled(100, 100, Qt.KeepAspectRatio))
 
     def clear_layout(self, layout):
         while layout.count():

@@ -1,0 +1,6 @@
+WindowType: ObstacleWindow
+Name: howdy
+Obstacle:0
+:0
+Notes: 
+ImagePath: /home/ted/Desktop/fate_device/pictures/Sad-face.png

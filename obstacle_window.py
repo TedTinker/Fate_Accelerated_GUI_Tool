@@ -1,5 +1,7 @@
 import os
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QGridLayout, QLineEdit, QPushButton, QWidget, QMessageBox, QLabel
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QGridLayout, QLineEdit, QPushButton, QWidget, QMessageBox, QLabel, QFileDialog, QTextEdit
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import Qt
 from default_window import DefaultWindow, button_style
 
 class ObstacleWindow(DefaultWindow):
@@ -28,8 +30,8 @@ class ObstacleWindow(DefaultWindow):
         self.layout.insertWidget(3, self.new_row_button)
 
         # Position the toggle button and notes input correctly
-        self.layout.addWidget(self.notes_toggle_button)
-        self.layout.addWidget(self.notes_input)
+        self.layout.insertWidget(4, self.notes_toggle_button)
+        self.layout.addLayout(self.notes_image_layout)
 
     def add_row(self, agent="Obstacle", score="0"):
         row_widget = QWidget()
@@ -74,6 +76,7 @@ class ObstacleWindow(DefaultWindow):
                     score_input = row_widget.layout().itemAtPosition(0, 1).widget()
                     file.write(f"{agent_input.text()}:{score_input.text()}\n")
             file.write(f"Notes: {self.notes_input.toPlainText()}\n")
+            file.write(f"ImagePath: {self.image_path}\n")
         
         if not suppress_message:
             QMessageBox.information(self, 'Info', f'Contents saved to {name}.txt')
@@ -82,7 +85,11 @@ class ObstacleWindow(DefaultWindow):
         with open(file_path, 'r') as file:
             lines = file.readlines()
             self.name_input.setText(lines[1].split(": ")[1].strip())
-            for line in lines[2:-1]:
+            for line in lines[2:-2]:
                 agent, score = line.strip().split(':')
                 self.add_row(agent, score)
-            self.notes_input.setPlainText(lines[-1].split(": ", 1)[1].strip())
+            self.notes_input.setPlainText(lines[-2].split(": ", 1)[1].strip())
+            self.image_path = lines[-1].split(": ", 1)[1].strip()
+            if self.image_path:
+                pixmap = QPixmap(self.image_path)
+                self.image_label.setPixmap(pixmap.scaled(100, 100, Qt.KeepAspectRatio))
