@@ -1,7 +1,7 @@
 import os
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QWidget, QComboBox, QMessageBox, QMdiSubWindow
 from PyQt5.QtCore import Qt, QTimer
-from default_window import DefaultWindow
+from default_window import DefaultWindow, button_style
 from character_window import CharacterWindow
 from obstacle_window import ObstacleWindow
 
@@ -74,6 +74,7 @@ class ZoneWindow(DefaultWindow):
         row_layout.addWidget(name_label)
 
         remove_button = QPushButton('Remove', self)
+        button_style(remove_button)
         remove_button.clicked.connect(lambda: self.remove_row(row_widget, window_name))
         row_layout.addWidget(remove_button)
 

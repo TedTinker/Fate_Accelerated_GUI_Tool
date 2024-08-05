@@ -1,0 +1,12 @@
+WindowType: CharacterWindow
+Name: Ted
+Fate Points: 3
+Refresh: 3
+Careful: 0
+Clever: 0
+Flashy: 0
+Forceful: 0
+Quick: 0
+Sneaky: 0
+High Concept: 
+Trouble: 

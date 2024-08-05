@@ -1,6 +1,6 @@
 import os
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QWidget, QMessageBox
-from default_window import DefaultWindow
+from default_window import DefaultWindow, button_style
 
 class ObstacleWindow(DefaultWindow):
     def __init__(self, add_default_rows=True):
@@ -15,6 +15,7 @@ class ObstacleWindow(DefaultWindow):
             self.add_row("", "0")
         
         self.new_row_button = QPushButton('New Row', self)
+        button_style(self.new_row_button)
         self.new_row_button.clicked.connect(lambda: self.add_row("", "0"))
         self.layout.addWidget(self.new_row_button)
 
@@ -31,9 +32,10 @@ class ObstacleWindow(DefaultWindow):
         score_input.setText(score)
         row_layout.addWidget(score_input)
 
-        close_button = QPushButton('Close', self)
-        close_button.clicked.connect(lambda: self.remove_row(row_widget))
-        row_layout.addWidget(close_button)
+        remove_button = QPushButton('Remove', self)
+        button_style(remove_button)
+        remove_button.clicked.connect(lambda: self.remove_row(row_widget))
+        row_layout.addWidget(remove_button)
 
         self.rows_layout.addWidget(row_widget)
 

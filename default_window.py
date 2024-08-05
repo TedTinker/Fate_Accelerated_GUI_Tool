@@ -4,6 +4,11 @@ from PyQt5.QtCore import pyqtSlot
 
 
 
+def button_style(button):
+    button.setStyleSheet("background-color: #888888; color: white;")
+
+
+
 class DefaultWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -22,6 +27,7 @@ class DefaultWindow(QWidget):
         self.name_layout.addWidget(self.name_input)
         
         self.save_button = QPushButton('Save', self)
+        button_style(self.save_button)
         self.save_button.clicked.connect(self.save_contents)
         self.name_layout.addWidget(self.save_button)
         

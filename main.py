@@ -10,3 +10,5 @@ app = QApplication(sys.argv)
 mainWin = MainWindow()
 mainWin.show()
 sys.exit(app.exec_())
+
+# %%

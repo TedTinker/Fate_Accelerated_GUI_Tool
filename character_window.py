@@ -1,6 +1,6 @@
 import os 
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QWidget, QMessageBox
-from default_window import DefaultWindow
+from default_window import DefaultWindow, button_style
 
 class CharacterWindow(DefaultWindow):
     def __init__(self):
@@ -80,6 +80,7 @@ class CharacterWindow(DefaultWindow):
         aspects_layout.addLayout(self.aspects_list_layout)
         
         self.add_aspect_button = QPushButton('New Aspect', self)
+        button_style(self.add_aspect_button)
         self.add_aspect_button.clicked.connect(self.add_aspect)
         aspects_layout.addWidget(self.add_aspect_button)
         
@@ -93,6 +94,7 @@ class CharacterWindow(DefaultWindow):
         stunts_layout.addLayout(self.stunts_list_layout)
         
         self.add_stunt_button = QPushButton('New Stunt', self)
+        button_style(self.add_stunt_button)
         self.add_stunt_button.clicked.connect(self.add_stunt)
         stunts_layout.addWidget(self.add_stunt_button)
         
@@ -103,6 +105,7 @@ class CharacterWindow(DefaultWindow):
         aspect_layout.addWidget(aspect_input)
         
         remove_button = QPushButton('Remove', self)
+        button_style(remove_button)
         remove_button.clicked.connect(lambda: self.remove_aspect(aspect_layout))
         aspect_layout.addWidget(remove_button)
         
@@ -122,6 +125,7 @@ class CharacterWindow(DefaultWindow):
         stunt_layout.addWidget(stunt_input)
         
         remove_button = QPushButton('Remove', self)
+        button_style(remove_button)
         remove_button.clicked.connect(lambda: self.remove_stunt(stunt_layout))
         stunt_layout.addWidget(remove_button)
         
@@ -214,6 +218,7 @@ class CharacterWindow(DefaultWindow):
         aspect_layout.addWidget(aspect_input)
         
         remove_button = QPushButton('Remove', self)
+        button_style(remove_button)
         remove_button.clicked.connect(lambda: self.remove_aspect(aspect_layout))
         aspect_layout.addWidget(remove_button)
         
@@ -227,6 +232,7 @@ class CharacterWindow(DefaultWindow):
         stunt_layout.addWidget(stunt_input)
         
         remove_button = QPushButton('Remove', self)
+        button_style(remove_button)
         remove_button.clicked.connect(lambda: self.remove_stunt(stunt_layout))
         stunt_layout.addWidget(remove_button)
         
