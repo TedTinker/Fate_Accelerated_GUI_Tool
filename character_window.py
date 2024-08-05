@@ -112,6 +112,12 @@ class CharacterWindow(DefaultWindow):
         self.layout.addWidget(self.notes_toggle_button)
         self.layout.addLayout(self.notes_image_layout)
 
+        # Show the notes and image by default
+        self.notes_input.setVisible(True)
+        self.image_label.setVisible(True)
+        self.choose_image_button.setVisible(True)
+        self.notes_toggle_button.setText('Hide Notes and Image')
+
     def add_aspect(self):
         aspect_layout = QHBoxLayout()
         
