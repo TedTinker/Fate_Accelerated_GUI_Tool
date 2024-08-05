@@ -1,11 +1,138 @@
-import os
-from PyQt5.QtWidgets import QMessageBox
+import os 
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QWidget, QMessageBox
 from default_window import DefaultWindow
 
 class CharacterWindow(DefaultWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Character Window')
+
+        # Fate Points and Refresh
+        fate_refresh_layout = QHBoxLayout()
+        self.layout.addLayout(fate_refresh_layout)
+        
+        fate_refresh_layout.addWidget(QLabel('Fate Points'))
+        self.fate_points_input = QLineEdit(self)
+        self.fate_points_input.setText('3')
+        fate_refresh_layout.addWidget(self.fate_points_input)
+        
+        fate_refresh_layout.addWidget(QLabel('Refresh'))
+        self.refresh_input = QLineEdit(self)
+        self.refresh_input.setText('3')
+        fate_refresh_layout.addWidget(self.refresh_input)
+        
+        # Skills
+        skills_layout = QVBoxLayout()
+        self.layout.addLayout(skills_layout)
+        
+        skills_header_layout = QHBoxLayout()
+        skills_layout.addLayout(skills_header_layout)
+        
+        skills_header_layout.addWidget(QLabel('Careful'))
+        skills_header_layout.addWidget(QLabel('Clever'))
+        skills_header_layout.addWidget(QLabel('Flashy'))
+        skills_header_layout.addWidget(QLabel('Forceful'))
+        skills_header_layout.addWidget(QLabel('Quick'))
+        skills_header_layout.addWidget(QLabel('Sneaky'))
+        
+        skills_inputs_layout = QHBoxLayout()
+        skills_layout.addLayout(skills_inputs_layout)
+        
+        self.careful_input = QLineEdit(self)
+        self.careful_input.setText('0')
+        skills_inputs_layout.addWidget(self.careful_input)
+        
+        self.clever_input = QLineEdit(self)
+        self.clever_input.setText('0')
+        skills_inputs_layout.addWidget(self.clever_input)
+        
+        self.flashy_input = QLineEdit(self)
+        self.flashy_input.setText('0')
+        skills_inputs_layout.addWidget(self.flashy_input)
+        
+        self.forceful_input = QLineEdit(self)
+        self.forceful_input.setText('0')
+        skills_inputs_layout.addWidget(self.forceful_input)
+        
+        self.quick_input = QLineEdit(self)
+        self.quick_input.setText('0')
+        skills_inputs_layout.addWidget(self.quick_input)
+        
+        self.sneaky_input = QLineEdit(self)
+        self.sneaky_input.setText('0')
+        skills_inputs_layout.addWidget(self.sneaky_input)
+        
+        # Aspects
+        aspects_layout = QVBoxLayout()
+        self.layout.addLayout(aspects_layout)
+        
+        aspects_layout.addWidget(QLabel('Aspects:'))
+        
+        self.high_concept_input = QLineEdit(self)
+        self.high_concept_input.setPlaceholderText('High Concept')
+        aspects_layout.addWidget(self.high_concept_input)
+        
+        self.trouble_input = QLineEdit(self)
+        self.trouble_input.setPlaceholderText('Trouble')
+        aspects_layout.addWidget(self.trouble_input)
+        
+        self.aspects_list_layout = QVBoxLayout()
+        aspects_layout.addLayout(self.aspects_list_layout)
+        
+        self.add_aspect_button = QPushButton('New Aspect', self)
+        self.add_aspect_button.clicked.connect(self.add_aspect)
+        aspects_layout.addWidget(self.add_aspect_button)
+        
+        # Stunts
+        stunts_layout = QVBoxLayout()
+        self.layout.addLayout(stunts_layout)
+        
+        stunts_layout.addWidget(QLabel('Stunts:'))
+        
+        self.stunts_list_layout = QVBoxLayout()
+        stunts_layout.addLayout(self.stunts_list_layout)
+        
+        self.add_stunt_button = QPushButton('New Stunt', self)
+        self.add_stunt_button.clicked.connect(self.add_stunt)
+        stunts_layout.addWidget(self.add_stunt_button)
+        
+    def add_aspect(self):
+        aspect_layout = QHBoxLayout()
+        
+        aspect_input = QLineEdit(self)
+        aspect_layout.addWidget(aspect_input)
+        
+        remove_button = QPushButton('Remove', self)
+        remove_button.clicked.connect(lambda: self.remove_aspect(aspect_layout))
+        aspect_layout.addWidget(remove_button)
+        
+        self.aspects_list_layout.addLayout(aspect_layout)
+    
+    def remove_aspect(self, aspect_layout):
+        for i in reversed(range(aspect_layout.count())):
+            widget = aspect_layout.itemAt(i).widget()
+            if widget:
+                widget.setParent(None)
+        self.aspects_list_layout.removeItem(aspect_layout)
+    
+    def add_stunt(self):
+        stunt_layout = QHBoxLayout()
+        
+        stunt_input = QLineEdit(self)
+        stunt_layout.addWidget(stunt_input)
+        
+        remove_button = QPushButton('Remove', self)
+        remove_button.clicked.connect(lambda: self.remove_stunt(stunt_layout))
+        stunt_layout.addWidget(remove_button)
+        
+        self.stunts_list_layout.addLayout(stunt_layout)
+    
+    def remove_stunt(self, stunt_layout):
+        for i in reversed(range(stunt_layout.count())):
+            widget = stunt_layout.itemAt(i).widget()
+            if widget:
+                widget.setParent(None)
+        self.stunts_list_layout.removeItem(stunt_layout)
 
     def save_contents(self, suppress_message=False):
         name = self.name_input.text()
@@ -19,11 +146,88 @@ class CharacterWindow(DefaultWindow):
         with open(file_path, 'w') as file:
             file.write(f"WindowType: CharacterWindow\n")
             file.write(f"Name: {name}\n")
+            file.write(f"Fate Points: {self.fate_points_input.text()}\n")
+            file.write(f"Refresh: {self.refresh_input.text()}\n")
+            file.write(f"Careful: {self.careful_input.text()}\n")
+            file.write(f"Clever: {self.clever_input.text()}\n")
+            file.write(f"Flashy: {self.flashy_input.text()}\n")
+            file.write(f"Forceful: {self.forceful_input.text()}\n")
+            file.write(f"Quick: {self.quick_input.text()}\n")
+            file.write(f"Sneaky: {self.sneaky_input.text()}\n")
+            
+            file.write(f"High Concept: {self.high_concept_input.text()}\n")
+            file.write(f"Trouble: {self.trouble_input.text()}\n")
+            
+            for i in range(self.aspects_list_layout.count()):
+                aspect_layout = self.aspects_list_layout.itemAt(i).layout()
+                if aspect_layout:
+                    aspect_input = aspect_layout.itemAt(0).widget()
+                    file.write(f"Aspect: {aspect_input.text()}\n")
+            
+            for i in range(self.stunts_list_layout.count()):
+                stunt_layout = self.stunts_list_layout.itemAt(i).layout()
+                if stunt_layout:
+                    stunt_input = stunt_layout.itemAt(0).widget()
+                    file.write(f"Stunt: {stunt_input.text()}\n")
         
         if not suppress_message:
             QMessageBox.information(self, 'Info', f'Contents saved to {name}.txt')
 
     def load_contents(self, file_path):
+        # Clear existing aspects and stunts
+        self.clear_layout(self.aspects_list_layout)
+        self.clear_layout(self.stunts_list_layout)
+        
         with open(file_path, 'r') as file:
             lines = file.readlines()
             self.name_input.setText(lines[1].split(": ")[1].strip())
+            self.fate_points_input.setText(lines[2].split(": ")[1].strip())
+            self.refresh_input.setText(lines[3].split(": ")[1].strip())
+            self.careful_input.setText(lines[4].split(": ")[1].strip())
+            self.clever_input.setText(lines[5].split(": ")[1].strip())
+            self.flashy_input.setText(lines[6].split(": ")[1].strip())
+            self.forceful_input.setText(lines[7].split(": ")[1].strip())
+            self.quick_input.setText(lines[8].split(": ")[1].strip())
+            self.sneaky_input.setText(lines[9].split(": ")[1].strip())
+            self.high_concept_input.setText(lines[10].split(": ")[1].strip())
+            self.trouble_input.setText(lines[11].split(": ")[1].strip())
+            
+            for line in lines[12:]:
+                if line.startswith("Aspect:"):
+                    aspect_text = line.split(": ")[1].strip()
+                    self.add_aspect_with_text(aspect_text)
+                elif line.startswith("Stunt:"):
+                    stunt_text = line.split(": ")[1].strip()
+                    self.add_stunt_with_text(stunt_text)
+
+    def clear_layout(self, layout):
+        while layout.count():
+            child = layout.takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()
+    
+    def add_aspect_with_text(self, text):
+        aspect_layout = QHBoxLayout()
+        
+        aspect_input = QLineEdit(self)
+        aspect_input.setText(text)
+        aspect_layout.addWidget(aspect_input)
+        
+        remove_button = QPushButton('Remove', self)
+        remove_button.clicked.connect(lambda: self.remove_aspect(aspect_layout))
+        aspect_layout.addWidget(remove_button)
+        
+        self.aspects_list_layout.addLayout(aspect_layout)
+
+    def add_stunt_with_text(self, text):
+        stunt_layout = QHBoxLayout()
+        
+        stunt_input = QLineEdit(self)
+        stunt_input.setText(text)
+        stunt_layout.addWidget(stunt_input)
+        
+        remove_button = QPushButton('Remove', self)
+        remove_button.clicked.connect(lambda: self.remove_stunt(stunt_layout))
+        stunt_layout.addWidget(remove_button)
+        
+        self.stunts_list_layout.addLayout(stunt_layout)
