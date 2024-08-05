@@ -1,11 +1,57 @@
 import os
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QAction, QMdiArea, QMdiSubWindow
-from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QAction, QMdiArea, QMdiSubWindow, QWidget
+from PyQt5.QtCore import Qt, QTimer, QPoint, QEvent
+from PyQt5.QtGui import QPainter, QPen, QColor
 
 from default_window import DefaultWindow
 from character_window import CharacterWindow
 from obstacle_window import ObstacleWindow
 from zone_window import ZoneWindow
+
+class ConnectionOverlay(QWidget):
+    def __init__(self, mdi_area, parent=None):
+        super().__init__(parent)
+        self.setAttribute(Qt.WA_TransparentForMouseEvents)
+        self.mdi_area = mdi_area
+        self.connections = {}
+
+    def update_connections(self, connections):
+        self.connections = connections
+        self.update()
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        pen = QPen(Qt.black, 2)
+        painter.setPen(pen)
+
+        valid_windows = {sub_window.widget().name_input.text(): sub_window for sub_window in self.mdi_area.subWindowList() if self.is_valid_window(sub_window)}
+        
+        for zone_window, connected_window_names in self.connections.items():
+            if zone_window in valid_windows.values():
+                zone_center = self._get_center_point(zone_window)
+                painter.setBrush(QColor(255, 0, 0, 127))  # Red circle for zone center
+                painter.drawEllipse(zone_center, 5, 5)  # Draw a small circle at the center
+                for connected_window_name in connected_window_names:
+                    if connected_window_name in valid_windows:
+                        connected_center = self._get_center_point(valid_windows[connected_window_name])
+                        painter.setBrush(QColor(0, 0, 255, 127))  # Blue circle for connected window center
+                        painter.drawEllipse(connected_center, 5, 5)  # Draw a small circle at the center
+                        painter.drawLine(zone_center, connected_center)
+        
+        painter.end()
+
+    def _get_center_point(self, sub_window):
+        if not self.is_valid_window(sub_window):
+            return QPoint(0, 0)
+        global_center = sub_window.mapToGlobal(sub_window.rect().center())
+        local_center = self.mapFromGlobal(global_center)
+        return local_center
+
+    def is_valid_window(self, sub_window):
+        try:
+            return sub_window and sub_window.widget() and sub_window.isVisible() and not sub_window.isMinimized()
+        except RuntimeError:
+            return False
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -17,8 +63,22 @@ class MainWindow(QMainWindow):
         self.mdi_area = QMdiArea()
         self.setCentralWidget(self.mdi_area)
         
+        self.overlay = ConnectionOverlay(self.mdi_area, self.mdi_area.viewport())
+        self.overlay.setGeometry(self.mdi_area.viewport().geometry())
+        self.overlay.show()
+        
         self.create_menu()
         
+        self.zone_connections = {}
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_connections)
+        self.timer.start(100)  # Update every 100 ms
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.overlay.setGeometry(self.mdi_area.viewport().geometry())
+        self.update_connections()
+
     def create_menu(self):
         menubar = self.menuBar()
         
@@ -57,6 +117,11 @@ class MainWindow(QMainWindow):
         sub_window.show()
         
         self.update_zone_window_dropdowns()
+        self.update_connections()
+        
+        sub_window.moveEvent = self.update_connections_event
+        sub_window.resizeEvent = self.update_connections_event
+        sub_window.closeEvent = self.close_event
 
     def load_windows(self):
         options = QFileDialog.Options()
@@ -78,13 +143,14 @@ class MainWindow(QMainWindow):
                     else:
                         window_instance = DefaultWindow()
 
-                    window_instance.load_contents(file_name)  # Ensure the load_contents method is called
+                    window_instance.load_contents(file_name)
                     sub_window.setWidget(window_instance)
                     sub_window.setAttribute(Qt.WA_DeleteOnClose)
                     self.mdi_area.addSubWindow(sub_window)
                     sub_window.show()
         
         self.update_zone_window_dropdowns()
+        self.update_connections()
 
     def save_all_windows(self):
         saved_files = []
@@ -105,8 +171,30 @@ class MainWindow(QMainWindow):
             sub_window.close()
         
         self.update_zone_window_dropdowns()
+        self.update_connections()
 
     def update_zone_window_dropdowns(self):
         for sub_window in self.mdi_area.subWindowList():
             if isinstance(sub_window.widget(), ZoneWindow):
                 sub_window.widget().update_dropdown()
+        
+    def update_connections_event(self, event):
+        self.update_connections()
+        super(QMdiSubWindow, self).moveEvent(event)
+
+    def close_event(self, event):
+        sub_window = self.sender()
+        if isinstance(sub_window, QMdiSubWindow):
+            sub_window.deleteLater()
+        self.update_connections()
+        event.accept()
+
+    def update_connections(self):
+        self.zone_connections.clear()
+        for sub_window in self.mdi_area.subWindowList():
+            if isinstance(sub_window.widget(), ZoneWindow):
+                zone_window = sub_window.widget()
+                connected_windows = zone_window.get_all_row_names()
+                self.zone_connections[sub_window] = connected_windows
+        self.overlay.update_connections(self.zone_connections)
+        self.update()
