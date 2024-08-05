@@ -1,0 +1,2 @@
+WindowType: CharacterWindow
+Name: ted

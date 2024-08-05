@@ -1,0 +1,4 @@
+WindowType: ObstacleWindow
+Name: marathon
+Obstacle:0
+:0
