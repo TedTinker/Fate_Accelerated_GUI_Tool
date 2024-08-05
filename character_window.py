@@ -1,5 +1,5 @@
 import os 
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QWidget, QMessageBox
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QWidget, QMessageBox, QTextEdit
 from default_window import DefaultWindow, button_style
 
 class CharacterWindow(DefaultWindow):
@@ -102,6 +102,10 @@ class CharacterWindow(DefaultWindow):
         self.add_stunt_button.clicked.connect(self.add_stunt)
         stunts_layout.addWidget(self.add_stunt_button)
         
+        # Position the toggle button and notes input correctly
+        self.layout.addWidget(self.notes_toggle_button)
+        self.layout.addWidget(self.notes_input)
+
     def add_aspect(self):
         aspect_layout = QHBoxLayout()
         
@@ -177,6 +181,8 @@ class CharacterWindow(DefaultWindow):
                 if stunt_layout:
                     stunt_input = stunt_layout.itemAt(0).widget()
                     file.write(f"Stunt: {stunt_input.text()}\n")
+
+            file.write(f"Notes: {self.notes_input.toPlainText()}\n")
         
         if not suppress_message:
             QMessageBox.information(self, 'Info', f'Contents saved to {name}.txt')
@@ -200,13 +206,15 @@ class CharacterWindow(DefaultWindow):
             self.high_concept_input.setText(lines[10].split(": ")[1].strip())
             self.trouble_input.setText(lines[11].split(": ")[1].strip())
             
-            for line in lines[12:]:
+            for line in lines[12:-1]:
                 if line.startswith("Aspect:"):
                     aspect_text = line.split(": ")[1].strip()
                     self.add_aspect_with_text(aspect_text)
                 elif line.startswith("Stunt:"):
                     stunt_text = line.split(": ")[1].strip()
                     self.add_stunt_with_text(stunt_text)
+
+            self.notes_input.setPlainText(lines[-1].split(": ", 1)[1].strip())
 
     def clear_layout(self, layout):
         while layout.count():

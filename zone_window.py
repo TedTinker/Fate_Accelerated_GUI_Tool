@@ -1,5 +1,5 @@
 import os
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QWidget, QComboBox, QMessageBox, QMdiSubWindow
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QWidget, QComboBox, QMessageBox, QMdiSubWindow, QTextEdit
 from PyQt5.QtCore import Qt, QTimer
 from default_window import DefaultWindow, button_style
 from character_window import CharacterWindow
@@ -22,6 +22,10 @@ class ZoneWindow(DefaultWindow):
 
         self.update_dropdown()
         self.start_timer()
+
+        # Position the toggle button and notes input correctly
+        self.layout.addWidget(self.notes_toggle_button)
+        self.layout.addWidget(self.notes_input)
 
     def start_timer(self):
         self.timer = QTimer(self)
@@ -111,6 +115,7 @@ class ZoneWindow(DefaultWindow):
                 if row_widget:
                     name_label = row_widget.layout().itemAt(0).widget()
                     file.write(f"{name_label.text()}\n")
+            file.write(f"Notes: {self.notes_input.toPlainText()}\n")
         
         if not suppress_message:
             QMessageBox.information(self, 'Info', f'Contents saved to {name}.txt')
@@ -119,11 +124,12 @@ class ZoneWindow(DefaultWindow):
         with open(file_path, 'r') as file:
             lines = file.readlines()
             self.name_input.setText(lines[1].split(": ")[1].strip())
-            for line in lines[2:]:
+            for line in lines[2:-1]:
                 window_name = line.strip()
                 if not self.is_window_open(window_name):
                     self.load_window(window_name)
                 self.add_row(window_name)
+            self.notes_input.setPlainText(lines[-1].split(": ", 1)[1].strip())
 
     def is_window_open(self, window_name):
         return any(window.widget().name_input.text() == window_name for window in self.mdi_area.subWindowList())
