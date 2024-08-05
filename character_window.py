@@ -68,14 +68,18 @@ class CharacterWindow(DefaultWindow):
         
         aspects_layout.addWidget(QLabel('Aspects:'))
         
+        high_concept_layout = QHBoxLayout()
+        aspects_layout.addLayout(high_concept_layout)
+        high_concept_layout.addWidget(QLabel('High Concept'))
         self.high_concept_input = QLineEdit(self)
-        self.high_concept_input.setPlaceholderText('High Concept')
-        aspects_layout.addWidget(self.high_concept_input)
+        high_concept_layout.addWidget(self.high_concept_input)
         
+        trouble_layout = QHBoxLayout()
+        aspects_layout.addLayout(trouble_layout)
+        trouble_layout.addWidget(QLabel('Trouble'))
         self.trouble_input = QLineEdit(self)
-        self.trouble_input.setPlaceholderText('Trouble')
-        aspects_layout.addWidget(self.trouble_input)
-        
+        trouble_layout.addWidget(self.trouble_input)
+
         self.aspects_list_layout = QVBoxLayout()
         aspects_layout.addLayout(self.aspects_list_layout)
         

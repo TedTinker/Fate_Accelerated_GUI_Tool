@@ -1,6 +1,6 @@
 import os
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QAction, QMdiArea, QMdiSubWindow, QWidget
-from PyQt5.QtCore import Qt, QTimer, QPoint, QEvent
+from PyQt5.QtCore import Qt, QTimer, QPoint
 from PyQt5.QtGui import QPainter, QPen, QColor
 
 from default_window import DefaultWindow
