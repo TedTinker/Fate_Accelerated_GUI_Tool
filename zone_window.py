@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QW
 from PyQt5.QtCore import Qt, QTimer, pyqtSlot
 from PyQt5.QtGui import QPixmap
 from default_window import DefaultWindow, button_style
+from advantage_window import AdvantageWindow
 from character_window import CharacterWindow
 from obstacle_window import ObstacleWindow
 
@@ -199,6 +200,8 @@ class ZoneWindow(DefaultWindow):
                     window_instance = CharacterWindow()
                 elif window_type == "ZoneWindow":
                     window_instance = ZoneWindow(self.mdi_area)
+                elif window_type == "AdvantageWindow":
+                    window_instance = AdvantageWindow()
                 else:
                     window_instance = DefaultWindow()
 

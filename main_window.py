@@ -1,5 +1,5 @@
 import os
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QAction, QMdiArea, QMdiSubWindow, QWidget
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QAction, QMdiArea, QMdiSubWindow, QWidget, QToolBar, QComboBox
 from PyQt5.QtCore import Qt, QTimer, QPoint
 from PyQt5.QtGui import QPainter, QPen, QColor
 from default_window import DefaultWindow
@@ -84,7 +84,7 @@ class MainWindow(QMainWindow):
         self.overlay.setGeometry(self.mdi_area.viewport().geometry())
         self.overlay.show()
         
-        self.create_menu()
+        self.create_toolbar()
         
         self.zone_connections = {}
         self.timer = QTimer(self)
@@ -97,40 +97,46 @@ class MainWindow(QMainWindow):
         self.overlay.setGeometry(self.mdi_area.viewport().geometry())
         self.update_connections()
 
-    # Create the menu bar and actions
-    def create_menu(self):
-        menubar = self.menuBar()
+    # Create the toolbar with dropdown and buttons
+    def create_toolbar(self):
+        toolbar = QToolBar(self)
+        self.addToolBar(Qt.TopToolBarArea, toolbar)
         
-        file_menu = menubar.addMenu('File')
-        
-        new_advantage_action = QAction('New Advantage Window', self)
-        new_advantage_action.triggered.connect(lambda: self.new_window(AdvantageWindow))
-        file_menu.addAction(new_advantage_action)
-        
-        new_character_action = QAction('New Character Window', self)
-        new_character_action.triggered.connect(lambda: self.new_window(CharacterWindow))
-        file_menu.addAction(new_character_action)
-        
-        new_obstacle_action = QAction('New Obstacle Window', self)
-        new_obstacle_action.triggered.connect(lambda: self.new_window(ObstacleWindow))
-        file_menu.addAction(new_obstacle_action)
-        
-        new_zone_action = QAction('New Zone Window', self)
-        new_zone_action.triggered.connect(lambda: self.new_window(lambda: ZoneWindow(self.mdi_area)))
-        file_menu.addAction(new_zone_action)
+        self.new_window_menu = QComboBox(self)
+        self.new_window_menu.addItem('New Window')
+        self.new_window_menu.addItem('Advantage')
+        self.new_window_menu.addItem('Character')
+        self.new_window_menu.addItem('Obstacle')
+        self.new_window_menu.addItem('Zone')
+        self.new_window_menu.activated[str].connect(self.new_window_from_dropdown)
+        toolbar.addWidget(self.new_window_menu)
         
         load_action = QAction('Load', self)
         load_action.triggered.connect(self.load_windows)
-        file_menu.addAction(load_action)
+        toolbar.addAction(load_action)
 
         save_all_action = QAction('Save All', self)
         save_all_action.triggered.connect(self.save_all_windows)
-        file_menu.addAction(save_all_action)
+        toolbar.addAction(save_all_action)
         
         close_all_action = QAction('Close All', self)
         close_all_action.triggered.connect(self.close_all_windows)
-        file_menu.addAction(close_all_action)
+        toolbar.addAction(close_all_action)
     
+    # Handle new window creation from the dropdown menu
+    def new_window_from_dropdown(self, text):
+        if text == 'Advantage':
+            self.new_window(AdvantageWindow)
+        elif text == 'Character':
+            self.new_window(CharacterWindow)
+        elif text == 'Obstacle':
+            self.new_window(ObstacleWindow)
+        elif text == 'Zone':
+            self.new_window(lambda: ZoneWindow(self.mdi_area))
+
+        # Reset the dropdown menu selection to "New Window"
+        self.new_window_menu.setCurrentIndex(0)
+
     # Create a new window of the specified class
     def new_window(self, window_class):
         sub_window = QMdiSubWindow()
