@@ -6,6 +6,7 @@ from default_window import DefaultWindow
 from character_window import CharacterWindow
 from obstacle_window import ObstacleWindow
 from zone_window import ZoneWindow
+from advantage_window import AdvantageWindow
 
 # Overlay class to draw connections between windows
 class ConnectionOverlay(QWidget):
@@ -41,6 +42,8 @@ class ConnectionOverlay(QWidget):
                             pen = QPen(Qt.black, 2)
                         elif isinstance(connected_window.widget(), ObstacleWindow):
                             pen = QPen(Qt.white, 2)
+                        elif isinstance(connected_window.widget(), AdvantageWindow):
+                            pen = QPen(Qt.yellow, 2)
                         else:
                             pen = QPen(Qt.black, 2)
                         
@@ -100,6 +103,10 @@ class MainWindow(QMainWindow):
         
         file_menu = menubar.addMenu('File')
         
+        new_advantage_action = QAction('New Advantage Window', self)
+        new_advantage_action.triggered.connect(lambda: self.new_window(AdvantageWindow))
+        file_menu.addAction(new_advantage_action)
+        
         new_character_action = QAction('New Character Window', self)
         new_character_action.triggered.connect(lambda: self.new_window(CharacterWindow))
         file_menu.addAction(new_character_action)
@@ -158,6 +165,8 @@ class MainWindow(QMainWindow):
                         window_instance = CharacterWindow()
                     elif window_type == "ZoneWindow":
                         window_instance = ZoneWindow(self.mdi_area)
+                    elif window_type == "AdvantageWindow":
+                        window_instance = AdvantageWindow()
                     else:
                         window_instance = DefaultWindow()
 

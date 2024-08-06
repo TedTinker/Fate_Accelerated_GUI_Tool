@@ -83,6 +83,7 @@ class ZoneWindow(DefaultWindow):
 
         self.cleanup_removed_windows(current_names)
 
+
     # Remove rows for windows that are no longer open
     def cleanup_removed_windows(self, current_names):
         all_window_names = {window.widget().name_input.text() for window in self.mdi_area.subWindowList() if window.widget().name_input.text()}

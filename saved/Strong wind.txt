@@ -1,0 +1,4 @@
+WindowType: AdvantageWindow
+Name: Strong wind
+Notes: Strong wind might blow in any direction necessary for advantage when used.
+ImagePath: 
