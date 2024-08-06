@@ -9,24 +9,27 @@ class CharacterWindow(DefaultWindow):
         super().__init__()
         self.setWindowTitle('Character Window')
 
-        # Fate Points and Refresh
+        # Layout for Fate Points and Refresh
         fate_refresh_layout = QHBoxLayout()
         self.layout.addLayout(fate_refresh_layout)
         
+        # Fate Points input
         fate_refresh_layout.addWidget(QLabel('Fate Points'))
         self.fate_points_input = QLineEdit(self)
         self.fate_points_input.setText('3')
         fate_refresh_layout.addWidget(self.fate_points_input)
         
+        # Refresh input
         fate_refresh_layout.addWidget(QLabel('Refresh'))
         self.refresh_input = QLineEdit(self)
         self.refresh_input.setText('3')
         fate_refresh_layout.addWidget(self.refresh_input)
         
-        # Approaches
+        # Layout for Approaches
         skills_layout = QVBoxLayout()
         self.layout.addLayout(skills_layout)
         
+        # Header for Approaches
         skills_header_layout = QHBoxLayout()
         skills_layout.addLayout(skills_header_layout)
         
@@ -37,6 +40,7 @@ class CharacterWindow(DefaultWindow):
         skills_header_layout.addWidget(QLabel('Quick'))
         skills_header_layout.addWidget(QLabel('Sneaky'))
         
+        # Input fields for Approaches
         skills_inputs_layout = QHBoxLayout()
         skills_layout.addLayout(skills_inputs_layout)
         
@@ -64,57 +68,66 @@ class CharacterWindow(DefaultWindow):
         self.sneaky_input.setText('0')
         skills_inputs_layout.addWidget(self.sneaky_input)
         
-        # Aspects
+        # Layout for Aspects
         aspects_layout = QVBoxLayout()
         self.layout.addLayout(aspects_layout)
         
         aspects_layout.addWidget(QLabel('Aspects:'))
         
+        # High Concept input
         high_concept_layout = QHBoxLayout()
         aspects_layout.addLayout(high_concept_layout)
         high_concept_layout.addWidget(QLabel('High Concept'))
         self.high_concept_input = QLineEdit(self)
         high_concept_layout.addWidget(self.high_concept_input)
         
+        # Trouble input
         trouble_layout = QHBoxLayout()
         aspects_layout.addLayout(trouble_layout)
         trouble_layout.addWidget(QLabel('Trouble'))
         self.trouble_input = QLineEdit(self)
         trouble_layout.addWidget(self.trouble_input)
 
+        # Additional Aspects
         self.aspects_list_layout = QVBoxLayout()
         aspects_layout.addLayout(self.aspects_list_layout)
         
+        # Button to add a new aspect
         self.add_aspect_button = QPushButton('New Aspect', self)
         button_style(self.add_aspect_button)
         self.add_aspect_button.clicked.connect(self.add_aspect)
         aspects_layout.addWidget(self.add_aspect_button)
         
-        # Stunts
+        # Layout for Stunts
         stunts_layout = QVBoxLayout()
         self.layout.addLayout(stunts_layout)
         
         stunts_layout.addWidget(QLabel('Stunts:'))
         
+        # List of Stunts
         self.stunts_list_layout = QVBoxLayout()
         stunts_layout.addLayout(self.stunts_list_layout)
         
+        # Button to add a new stunt
         self.add_stunt_button = QPushButton('New Stunt', self)
         button_style(self.add_stunt_button)
         self.add_stunt_button.clicked.connect(self.add_stunt)
         stunts_layout.addWidget(self.add_stunt_button)
         
+        # Re-add the toggle button and notes/image layout
         self.notes_toggle_button.setParent(None)
         self.notes_image_layout.setParent(None)
 
         self.layout.addWidget(self.notes_toggle_button)
         self.layout.addLayout(self.notes_image_layout)
 
+        # Show the notes and image by default
         self.notes_input.setVisible(True)
         self.image_label.setVisible(True)
         self.choose_image_button.setVisible(True)
         self.notes_toggle_button.setText('Hide Notes and Image')
 
+    # Add a new aspect
     def add_aspect(self):
         aspect_layout = QHBoxLayout()
         
@@ -128,6 +141,7 @@ class CharacterWindow(DefaultWindow):
         
         self.aspects_list_layout.addLayout(aspect_layout)
     
+    # Remove an aspect
     def remove_aspect(self, aspect_layout):
         for i in reversed(range(aspect_layout.count())):
             widget = aspect_layout.itemAt(i).widget()
@@ -135,6 +149,7 @@ class CharacterWindow(DefaultWindow):
                 widget.setParent(None)
         self.aspects_list_layout.removeItem(aspect_layout)
     
+    # Add a new stunt
     def add_stunt(self):
         stunt_layout = QHBoxLayout()
         
@@ -148,6 +163,7 @@ class CharacterWindow(DefaultWindow):
         
         self.stunts_list_layout.addLayout(stunt_layout)
     
+    # Remove a stunt
     def remove_stunt(self, stunt_layout):
         for i in reversed(range(stunt_layout.count())):
             widget = stunt_layout.itemAt(i).widget()
@@ -155,6 +171,7 @@ class CharacterWindow(DefaultWindow):
                 widget.setParent(None)
         self.stunts_list_layout.removeItem(stunt_layout)
 
+    # Toggle visibility of notes and image section
     def toggle_notes(self):
         visible = not self.notes_input.isVisible()
         self.notes_input.setVisible(visible)
@@ -162,6 +179,7 @@ class CharacterWindow(DefaultWindow):
         self.choose_image_button.setVisible(visible)
         self.notes_toggle_button.setText('Hide Notes and Image' if visible else 'Show Notes and Image')
 
+    # Choose an image
     @pyqtSlot()
     def choose_image(self):
         options = QFileDialog.Options()
@@ -172,6 +190,7 @@ class CharacterWindow(DefaultWindow):
             pixmap = QPixmap(file_path)
             self.image_label.setPixmap(pixmap.scaled(100, 100, Qt.KeepAspectRatio))
 
+    # Save contents to a file
     def save_contents(self, suppress_message=False):
         name = self.name_input.text()
         if not name:
@@ -214,6 +233,7 @@ class CharacterWindow(DefaultWindow):
         if not suppress_message:
             QMessageBox.information(self, 'Info', f'Contents saved to {name}.txt')
 
+    # Load contents from a file
     def load_contents(self, file_path):
         self.clear_layout(self.aspects_list_layout)
         self.clear_layout(self.stunts_list_layout)
@@ -246,12 +266,14 @@ class CharacterWindow(DefaultWindow):
                 pixmap = QPixmap(self.image_path)
                 self.image_label.setPixmap(pixmap.scaled(100, 100, Qt.KeepAspectRatio))
 
+    # Clear a layout
     def clear_layout(self, layout):
         while layout.count():
             child = layout.takeAt(0)
             if child.widget():
                 child.widget().deleteLater()
     
+    # Add an aspect with text
     def add_aspect_with_text(self, text):
         aspect_layout = QHBoxLayout()
         
@@ -266,6 +288,7 @@ class CharacterWindow(DefaultWindow):
         
         self.aspects_list_layout.addLayout(aspect_layout)
 
+    # Add a stunt with text
     def add_stunt_with_text(self, text):
         stunt_layout = QHBoxLayout()
         

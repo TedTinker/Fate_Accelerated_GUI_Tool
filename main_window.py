@@ -7,6 +7,7 @@ from character_window import CharacterWindow
 from obstacle_window import ObstacleWindow
 from zone_window import ZoneWindow
 
+# Overlay class to draw connections between windows
 class ConnectionOverlay(QWidget):
     def __init__(self, mdi_area, parent=None):
         super().__init__(parent)
@@ -14,10 +15,12 @@ class ConnectionOverlay(QWidget):
         self.mdi_area = mdi_area
         self.connections = {}
 
+    # Update the connections to be drawn
     def update_connections(self, connections):
         self.connections = connections
         self.update()
 
+    # Paint event to draw the connections
     def paintEvent(self, event):
         painter = QPainter(self)
         
@@ -33,6 +36,7 @@ class ConnectionOverlay(QWidget):
                         connected_window = valid_windows[connected_window_name]
                         connected_center = self._get_center_point(connected_window)
                         
+                        # Set the pen color based on the type of connected window
                         if isinstance(connected_window.widget(), CharacterWindow):
                             pen = QPen(Qt.black, 2)
                         elif isinstance(connected_window.widget(), ObstacleWindow):
@@ -47,6 +51,7 @@ class ConnectionOverlay(QWidget):
         
         painter.end()
 
+    # Get the center point of a sub-window
     def _get_center_point(self, sub_window):
         if not self.is_valid_window(sub_window):
             return QPoint(0, 0)
@@ -54,12 +59,14 @@ class ConnectionOverlay(QWidget):
         local_center = self.mapFromGlobal(global_center)
         return local_center
 
+    # Check if a sub-window is valid for drawing connections
     def is_valid_window(self, sub_window):
         try:
             return sub_window and sub_window.widget() and sub_window.isVisible() and not sub_window.isMinimized()
         except RuntimeError:
             return False
 
+# Main application window class
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -79,13 +86,15 @@ class MainWindow(QMainWindow):
         self.zone_connections = {}
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_connections)
-        self.timer.start(100) 
+        self.timer.start(100)  # Update every 100 ms
 
+    # Update the overlay geometry on resize
     def resizeEvent(self, event):
         super().resizeEvent(event)
         self.overlay.setGeometry(self.mdi_area.viewport().geometry())
         self.update_connections()
 
+    # Create the menu bar and actions
     def create_menu(self):
         menubar = self.menuBar()
         
@@ -115,6 +124,7 @@ class MainWindow(QMainWindow):
         close_all_action.triggered.connect(self.close_all_windows)
         file_menu.addAction(close_all_action)
     
+    # Create a new window of the specified class
     def new_window(self, window_class):
         sub_window = QMdiSubWindow()
         window_instance = window_class()
@@ -130,6 +140,7 @@ class MainWindow(QMainWindow):
         sub_window.resizeEvent = self.update_connections_event
         sub_window.closeEvent = self.close_event
 
+    # Load windows from saved files
     def load_windows(self):
         options = QFileDialog.Options()
         file_names, _ = QFileDialog.getOpenFileNames(self, "Load Files", "saved", "Text Files (*.txt);;All Files (*)", options=options)
@@ -159,6 +170,7 @@ class MainWindow(QMainWindow):
         self.update_zone_window_dropdowns()
         self.update_connections()
 
+    # Save all open windows
     def save_all_windows(self):
         saved_files = []
         for sub_window in self.mdi_area.subWindowList():
@@ -173,6 +185,7 @@ class MainWindow(QMainWindow):
             saved_files_str = ", ".join(saved_files)
             QMessageBox.information(self, 'Info', f'Contents saved to {saved_files_str}')
                 
+    # Close all open windows
     def close_all_windows(self):
         for sub_window in self.mdi_area.subWindowList():
             sub_window.close()
@@ -180,15 +193,18 @@ class MainWindow(QMainWindow):
         self.update_zone_window_dropdowns()
         self.update_connections()
 
+    # Update the dropdowns in all zone windows
     def update_zone_window_dropdowns(self):
         for sub_window in self.mdi_area.subWindowList():
             if isinstance(sub_window.widget(), ZoneWindow):
                 sub_window.widget().update_dropdown()
         
+    # Event handler to update connections on move/resize
     def update_connections_event(self, event):
         self.update_connections()
         super(QMdiSubWindow, self).moveEvent(event)
 
+    # Event handler to update connections on close
     def close_event(self, event):
         sub_window = self.sender()
         if isinstance(sub_window, QMdiSubWindow):
@@ -196,6 +212,7 @@ class MainWindow(QMainWindow):
         self.update_connections()
         event.accept()
 
+    # Update the connections for the overlay
     def update_connections(self):
         self.zone_connections.clear()
         for sub_window in self.mdi_area.subWindowList():

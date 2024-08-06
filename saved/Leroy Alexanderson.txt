@@ -14,4 +14,4 @@ Aspect: Good at multitasking.
 Stunt: Can request marine backup.
 Stunt: Good at convincing people of his authority.
 Notes: Famous marine captain.
-ImagePath: /home/ted/Desktop/fate_device/pictures/marine captain.png
+ImagePath: /home/ted/Desktop/Fate_Accelerated_GUI_Tool/pictures/marine captain.png

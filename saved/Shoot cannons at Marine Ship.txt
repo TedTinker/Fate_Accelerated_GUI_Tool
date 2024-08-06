@@ -3,4 +3,4 @@ Name: Shoot cannons at Marine Ship
 Obstacle:3
 Progress:2
 Notes: 
-ImagePath: /home/ted/Desktop/fate_device/pictures/pirate cannon.png
+ImagePath: /home/ted/Desktop/Fate_Accelerated_GUI_Tool/pictures/pirate cannon.png
