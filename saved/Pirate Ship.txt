@@ -1,0 +1,6 @@
+WindowType: ZoneWindow
+Name: Pirate Ship
+Blackbeard
+Shoot cannons at Marine Ship
+Notes: Blackbeard's ship.
+ImagePath: /home/ted/Desktop/fate_device/pictures/pirate boat.png

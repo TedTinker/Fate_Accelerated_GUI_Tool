@@ -9,15 +9,15 @@ class ObstacleWindow(DefaultWindow):
         super().__init__()
         self.setWindowTitle('Obstacle Window')
 
-        self.rows_layout = QVBoxLayout()
-        self.layout.insertLayout(1, self.rows_layout)
-
         header_layout = QHBoxLayout()
-        self.layout.insertLayout(1, header_layout)
-
         header_layout.addWidget(QLabel("Agent"))
         header_layout.addWidget(QLabel("Score"))
         header_layout.addWidget(QLabel(""))
+
+        self.layout.addLayout(header_layout)
+
+        self.rows_layout = QVBoxLayout()
+        self.layout.addLayout(self.rows_layout)
 
         if add_default_rows:
             self.add_row("Obstacle", "0")
@@ -26,7 +26,7 @@ class ObstacleWindow(DefaultWindow):
         self.new_row_button = QPushButton('New Row', self)
         button_style(self.new_row_button)
         self.new_row_button.clicked.connect(lambda: self.add_row("", "0"))
-        self.layout.insertWidget(2, self.new_row_button)
+        self.layout.addWidget(self.new_row_button)
 
         self.notes_toggle_button.setParent(None)
         self.notes_image_layout.setParent(None)

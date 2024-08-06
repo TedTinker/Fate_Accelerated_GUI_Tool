@@ -23,7 +23,7 @@ class CharacterWindow(DefaultWindow):
         self.refresh_input.setText('3')
         fate_refresh_layout.addWidget(self.refresh_input)
         
-        # Aspects
+        # Approaches
         skills_layout = QVBoxLayout()
         self.layout.addLayout(skills_layout)
         

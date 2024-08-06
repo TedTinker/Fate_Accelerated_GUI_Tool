@@ -1,0 +1,6 @@
+WindowType: ObstacleWindow
+Name: Shoot cannons at Marine Ship
+Obstacle:3
+Progress:2
+Notes: 
+ImagePath: /home/ted/Desktop/fate_device/pictures/pirate cannon.png
