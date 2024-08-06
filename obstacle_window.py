@@ -1,5 +1,5 @@
 import os
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QWidget, QMessageBox, QTextEdit, QFileDialog, QLabel
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QWidget, QMessageBox, QFileDialog, QLabel
 from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QPixmap
 from default_window import DefaultWindow, button_style
@@ -28,15 +28,12 @@ class ObstacleWindow(DefaultWindow):
         self.new_row_button.clicked.connect(lambda: self.add_row("", "0"))
         self.layout.insertWidget(2, self.new_row_button)
 
-        # Ensure only one instance of the toggle button and notes/image layout
         self.notes_toggle_button.setParent(None)
         self.notes_image_layout.setParent(None)
 
-        # Position the toggle button and notes input correctly
         self.layout.addWidget(self.notes_toggle_button)
         self.layout.addLayout(self.notes_image_layout)
 
-        # Show the notes and image by default
         self.notes_input.setVisible(True)
         self.image_label.setVisible(True)
         self.choose_image_button.setVisible(True)

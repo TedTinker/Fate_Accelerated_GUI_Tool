@@ -1,6 +1,0 @@
-WindowType: ZoneWindow
-Name: fdsaasdf
-Ted
-howdy
-Notes: 
-ImagePath: /home/ted/Desktop/fate_device/pictures/happy_face.jpg

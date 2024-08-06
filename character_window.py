@@ -1,5 +1,5 @@
 import os 
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QWidget, QMessageBox, QTextEdit, QFileDialog
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QMessageBox, QFileDialog
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt, pyqtSlot
 from default_window import DefaultWindow, button_style
@@ -23,7 +23,7 @@ class CharacterWindow(DefaultWindow):
         self.refresh_input.setText('3')
         fate_refresh_layout.addWidget(self.refresh_input)
         
-        # Skills
+        # Aspects
         skills_layout = QVBoxLayout()
         self.layout.addLayout(skills_layout)
         
@@ -104,15 +104,12 @@ class CharacterWindow(DefaultWindow):
         self.add_stunt_button.clicked.connect(self.add_stunt)
         stunts_layout.addWidget(self.add_stunt_button)
         
-        # Ensure only one instance of the toggle button and notes/image layout
         self.notes_toggle_button.setParent(None)
         self.notes_image_layout.setParent(None)
 
-        # Position the toggle button and notes input correctly
         self.layout.addWidget(self.notes_toggle_button)
         self.layout.addLayout(self.notes_image_layout)
 
-        # Show the notes and image by default
         self.notes_input.setVisible(True)
         self.image_label.setVisible(True)
         self.choose_image_button.setVisible(True)
@@ -218,7 +215,6 @@ class CharacterWindow(DefaultWindow):
             QMessageBox.information(self, 'Info', f'Contents saved to {name}.txt')
 
     def load_contents(self, file_path):
-        # Clear existing aspects and stunts
         self.clear_layout(self.aspects_list_layout)
         self.clear_layout(self.stunts_list_layout)
         

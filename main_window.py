@@ -1,8 +1,6 @@
-import os
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QAction, QMdiArea, QMdiSubWindow, QWidget
 from PyQt5.QtCore import Qt, QTimer, QPoint
 from PyQt5.QtGui import QPainter, QPen, QColor
-
 from default_window import DefaultWindow
 from character_window import CharacterWindow
 from obstacle_window import ObstacleWindow
@@ -29,13 +27,13 @@ class ConnectionOverlay(QWidget):
         for zone_window, connected_window_names in self.connections.items():
             if zone_window in valid_windows.values():
                 zone_center = self._get_center_point(zone_window)
-                painter.setBrush(QColor(255, 0, 0, 127))  # Red circle for zone center
-                painter.drawEllipse(zone_center, 5, 5)  # Draw a small circle at the center
+                painter.setBrush(QColor(255, 0, 0, 127)) 
+                painter.drawEllipse(zone_center, 5, 5) 
                 for connected_window_name in connected_window_names:
                     if connected_window_name in valid_windows:
                         connected_center = self._get_center_point(valid_windows[connected_window_name])
-                        painter.setBrush(QColor(0, 0, 255, 127))  # Blue circle for connected window center
-                        painter.drawEllipse(connected_center, 5, 5)  # Draw a small circle at the center
+                        painter.setBrush(QColor(0, 0, 255, 127))  
+                        painter.drawEllipse(connected_center, 5, 5)  
                         painter.drawLine(zone_center, connected_center)
         
         painter.end()
@@ -72,7 +70,7 @@ class MainWindow(QMainWindow):
         self.zone_connections = {}
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_connections)
-        self.timer.start(100)  # Update every 100 ms
+        self.timer.start(100) 
 
     def resizeEvent(self, event):
         super().resizeEvent(event)

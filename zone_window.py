@@ -1,5 +1,5 @@
 import os
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QWidget, QComboBox, QMessageBox, QMdiSubWindow, QTextEdit, QFileDialog, QLabel
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QWidget, QComboBox, QMessageBox, QMdiSubWindow, QFileDialog
 from PyQt5.QtCore import Qt, QTimer, pyqtSlot
 from PyQt5.QtGui import QPixmap
 from default_window import DefaultWindow, button_style
@@ -21,15 +21,12 @@ class ZoneWindow(DefaultWindow):
         self.rows_layout = QVBoxLayout()
         self.layout.addLayout(self.rows_layout)
 
-        # Ensure only one instance of the toggle button and notes/image layout
         self.notes_toggle_button.setParent(None)
         self.notes_image_layout.setParent(None)
         
-        # Add the toggle button and notes/image layout at the bottom
         self.layout.addWidget(self.notes_toggle_button)
         self.layout.addLayout(self.notes_image_layout)
 
-        # Show the notes and image by default
         self.notes_input.setVisible(True)
         self.image_label.setVisible(True)
         self.choose_image_button.setVisible(True)
