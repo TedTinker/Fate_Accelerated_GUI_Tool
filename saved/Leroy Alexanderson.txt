@@ -15,3 +15,5 @@ Stunt: Can request marine backup.
 Stunt: Good at convincing people of his authority.
 Notes: Famous marine captain.
 ImagePath: /home/ted/Desktop/Fate_Accelerated_GUI_Tool/pictures/marine captain.png
+Stress: 100
+Consequences: 010
