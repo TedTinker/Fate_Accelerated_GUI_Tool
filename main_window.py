@@ -1,3 +1,4 @@
+import os
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QAction, QMdiArea, QMdiSubWindow, QWidget
 from PyQt5.QtCore import Qt, QTimer, QPoint
 from PyQt5.QtGui import QPainter, QPen, QColor
@@ -19,9 +20,7 @@ class ConnectionOverlay(QWidget):
 
     def paintEvent(self, event):
         painter = QPainter(self)
-        pen = QPen(Qt.black, 2)
-        painter.setPen(pen)
-
+        
         valid_windows = {sub_window.widget().name_input.text(): sub_window for sub_window in self.mdi_area.subWindowList() if self.is_valid_window(sub_window)}
         
         for zone_window, connected_window_names in self.connections.items():
@@ -31,7 +30,17 @@ class ConnectionOverlay(QWidget):
                 painter.drawEllipse(zone_center, 5, 5) 
                 for connected_window_name in connected_window_names:
                     if connected_window_name in valid_windows:
-                        connected_center = self._get_center_point(valid_windows[connected_window_name])
+                        connected_window = valid_windows[connected_window_name]
+                        connected_center = self._get_center_point(connected_window)
+                        
+                        if isinstance(connected_window.widget(), CharacterWindow):
+                            pen = QPen(Qt.black, 2)
+                        elif isinstance(connected_window.widget(), ObstacleWindow):
+                            pen = QPen(Qt.white, 2)
+                        else:
+                            pen = QPen(Qt.black, 2)
+                        
+                        painter.setPen(pen)
                         painter.setBrush(QColor(0, 0, 255, 127))  
                         painter.drawEllipse(connected_center, 5, 5)  
                         painter.drawLine(zone_center, connected_center)
