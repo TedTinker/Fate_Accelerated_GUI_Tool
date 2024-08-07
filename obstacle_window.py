@@ -20,12 +20,12 @@ class ObstacleWindow(DefaultWindow):
         self.layout.addLayout(self.rows_layout)
 
         if add_default_rows:
-            self.add_row("Obstacle", 0)
-            self.add_row("", 0)
+            self.add_row("Obstacle", "0")
+            self.add_row("", "0")
         
         self.new_row_button = QPushButton('New Row', self)
         button_style(self.new_row_button)
-        self.new_row_button.clicked.connect(lambda: self.add_row("", 0))
+        self.new_row_button.clicked.connect(lambda: self.add_row("", "0"))
         self.layout.addWidget(self.new_row_button)
 
         self.notes_toggle_button.setParent(None)
@@ -39,7 +39,7 @@ class ObstacleWindow(DefaultWindow):
         self.choose_image_button.setVisible(True)
         self.notes_toggle_button.setText('Hide Notes and Image')
 
-    def add_row(self, agent="Obstacle", score=0):
+    def add_row(self, agent="Obstacle", score="0"):
         row_widget = QWidget()
         row_layout = QHBoxLayout()
         row_widget.setLayout(row_layout)
@@ -50,7 +50,7 @@ class ObstacleWindow(DefaultWindow):
 
         score_input = QSpinBox(self)
         score_input.setRange(-9999, 9999)
-        score_input.setValue(score)
+        score_input.setValue(int(score))
         row_layout.addWidget(score_input)
 
         remove_button = QPushButton('Remove', self)
@@ -87,8 +87,9 @@ class ObstacleWindow(DefaultWindow):
             QMessageBox.warning(self, 'Warning', 'Name cannot be empty!')
             return
         
-        os.makedirs("saved", exist_ok=True)
-        file_path = os.path.join("saved", f"{name}.txt")
+        save_folder = os.path.join("saved", "Obstacles")
+        os.makedirs(save_folder, exist_ok=True)
+        file_path = os.path.join(save_folder, f"{name}.txt")
         
         with open(file_path, 'w') as file:
             file.write(f"WindowType: ObstacleWindow\n")
@@ -103,7 +104,7 @@ class ObstacleWindow(DefaultWindow):
             file.write(f"ImagePath: {self.image_path}\n")
         
         if not suppress_message:
-            QMessageBox.information(self, 'Info', f'Contents saved to {name}.txt')
+            QMessageBox.information(self, 'Info', f'Contents saved to {file_path}')
 
     def load_contents(self, file_path):
         with open(file_path, 'r') as file:
@@ -111,9 +112,12 @@ class ObstacleWindow(DefaultWindow):
             self.name_input.setText(lines[1].split(": ")[1].strip())
             for line in lines[2:-2]:
                 agent, score = line.strip().split(':')
-                self.add_row(agent, int(score))
+                self.add_row(agent, score)
             self.notes_input.setPlainText(lines[-2].split(": ", 1)[1].strip())
             self.image_path = lines[-1].split(": ", 1)[1].strip()
             if self.image_path:
                 pixmap = QPixmap(self.image_path)
                 self.image_label.setPixmap(pixmap.scaled(100, 100, Qt.KeepAspectRatio))
+
+    def get_save_folder(self):
+        return "Obstacles"

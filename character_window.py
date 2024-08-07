@@ -202,8 +202,9 @@ class CharacterWindow(DefaultWindow):
             QMessageBox.warning(self, 'Warning', 'Name cannot be empty!')
             return
         
-        os.makedirs("saved", exist_ok=True)
-        file_path = os.path.join("saved", f"{name}.txt")
+        save_folder = os.path.join("saved", "Characters")
+        os.makedirs(save_folder, exist_ok=True)
+        file_path = os.path.join(save_folder, f"{name}.txt")
         
         with open(file_path, 'w') as file:
             file.write(f"WindowType: CharacterWindow\n")
@@ -244,7 +245,7 @@ class CharacterWindow(DefaultWindow):
             file.write("\n")
         
         if not suppress_message:
-            QMessageBox.information(self, 'Info', f'Contents saved to {name}.txt')
+            QMessageBox.information(self, 'Info', f'Contents saved to {file_path}')
 
     def load_contents(self, file_path):
         self.clear_layout(self.aspects_list_layout)
@@ -321,3 +322,6 @@ class CharacterWindow(DefaultWindow):
         stunt_layout.addWidget(remove_button)
         
         self.stunts_list_layout.addLayout(stunt_layout)
+
+    def get_save_folder(self):
+        return "Characters"
