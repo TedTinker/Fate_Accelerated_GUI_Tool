@@ -1,8 +1,54 @@
-import os 
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QMessageBox, QFileDialog, QCheckBox, QSpinBox
+import os
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QMessageBox, QFileDialog, QSpinBox, QCheckBox, QDialog, QDialogButtonBox, QFormLayout
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt, pyqtSlot
 from default_window import DefaultWindow, button_style
+
+class CustomDialog(QDialog):
+    def __init__(self, title, current_values, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle(title)
+        
+        self.layout = QVBoxLayout(self)
+        
+        self.form_layout = QFormLayout()
+        self.layout.addLayout(self.form_layout)
+        
+        self.spin_boxes = []
+        for value in current_values:
+            self.add_spin_box(value)
+        
+        self.add_button = QPushButton("Add")
+        self.add_button.clicked.connect(lambda: self.add_spin_box(1))
+        self.layout.addWidget(self.add_button)
+        
+        self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.button_box.accepted.connect(self.accept)
+        self.button_box.rejected.connect(self.reject)
+        self.layout.addWidget(self.button_box)
+    
+    def add_spin_box(self, value):
+        row_layout = QHBoxLayout()
+        spin_box = QSpinBox(self)
+        spin_box.setValue(value)
+        spin_box.setRange(1, 1000)
+        remove_button = QPushButton("Remove", self)
+        button_style(remove_button)
+        remove_button.clicked.connect(lambda: self.remove_spin_box(row_layout, spin_box))
+        
+        row_layout.addWidget(spin_box)
+        row_layout.addWidget(remove_button)
+        self.spin_boxes.append((spin_box, row_layout))
+        self.form_layout.addRow(f"Value {len(self.spin_boxes)}:", row_layout)
+
+    def remove_spin_box(self, row_layout, spin_box):
+        self.spin_boxes = [(sb, rl) for sb, rl in self.spin_boxes if sb != spin_box]
+        for i in reversed(range(row_layout.count())):
+            row_layout.itemAt(i).widget().setParent(None)
+        self.form_layout.removeRow(row_layout)
+    
+    def get_values(self):
+        return sorted([spin_box.value() for spin_box, _ in self.spin_boxes])
 
 class CharacterWindow(DefaultWindow):
     def __init__(self):
@@ -41,27 +87,21 @@ class CharacterWindow(DefaultWindow):
         skills_layout.addLayout(skills_inputs_layout)
         
         self.careful_input = QSpinBox(self)
-        self.careful_input.setRange(-9999, 9999)
         skills_inputs_layout.addWidget(self.careful_input)
         
         self.clever_input = QSpinBox(self)
-        self.clever_input.setRange(-9999, 9999)
         skills_inputs_layout.addWidget(self.clever_input)
         
         self.flashy_input = QSpinBox(self)
-        self.flashy_input.setRange(-9999, 9999)
         skills_inputs_layout.addWidget(self.flashy_input)
         
         self.forceful_input = QSpinBox(self)
-        self.forceful_input.setRange(-9999, 9999)
         skills_inputs_layout.addWidget(self.forceful_input)
         
         self.quick_input = QSpinBox(self)
-        self.quick_input.setRange(-9999, 9999)
         skills_inputs_layout.addWidget(self.quick_input)
         
         self.sneaky_input = QSpinBox(self)
-        self.sneaky_input.setRange(-9999, 9999)
         skills_inputs_layout.addWidget(self.sneaky_input)
         
         # Aspects
@@ -104,29 +144,16 @@ class CharacterWindow(DefaultWindow):
         self.add_stunt_button.clicked.connect(self.add_stunt)
         stunts_layout.addWidget(self.add_stunt_button)
 
-        # Stress
-        stress_layout = QHBoxLayout()
-        self.layout.addLayout(stress_layout)
-        
-        stress_layout.addWidget(QLabel('Stress:'))
-        self.stress_checkboxes = []
-        for i in range(1, 4):
-            stress_layout.addWidget(QLabel(str(i)))
-            checkbox = QCheckBox(self)
-            self.stress_checkboxes.append(checkbox)
-            stress_layout.addWidget(checkbox)
+        # Stress and Consequences
+        self.stress_layout = QHBoxLayout()
+        self.layout.addLayout(self.stress_layout)
+        self.stress_values = [1, 2, 3]
+        self.add_stress_row()
 
-        # Consequences
-        consequences_layout = QHBoxLayout()
-        self.layout.addLayout(consequences_layout)
-        
-        consequences_layout.addWidget(QLabel('Consequences:'))
-        self.consequences_checkboxes = []
-        for i in [2, 4, 6]:
-            consequences_layout.addWidget(QLabel(str(i)))
-            checkbox = QCheckBox(self)
-            self.consequences_checkboxes.append(checkbox)
-            consequences_layout.addWidget(checkbox)
+        self.consequences_layout = QHBoxLayout()
+        self.layout.addLayout(self.consequences_layout)
+        self.consequences_values = [2, 4, 6]
+        self.add_consequences_row()
         
         self.notes_toggle_button.setParent(None)
         self.notes_image_layout.setParent(None)
@@ -138,6 +165,46 @@ class CharacterWindow(DefaultWindow):
         self.image_label.setVisible(True)
         self.choose_image_button.setVisible(True)
         self.notes_toggle_button.setText('Hide Notes and Image')
+
+    def add_stress_row(self):
+        self.clear_layout(self.stress_layout)
+        self.stress_layout.addWidget(QLabel('Stress:'))
+        self.stress_checkboxes = []
+        for value in self.stress_values:
+            self.stress_layout.addWidget(QLabel(str(value)))
+            checkbox = QCheckBox(self)
+            self.stress_checkboxes.append(checkbox)
+            self.stress_layout.addWidget(checkbox)
+        customize_button = QPushButton('Customize', self)
+        button_style(customize_button)
+        customize_button.clicked.connect(self.customize_stress)
+        self.stress_layout.addWidget(customize_button)
+
+    def add_consequences_row(self):
+        self.clear_layout(self.consequences_layout)
+        self.consequences_layout.addWidget(QLabel('Consequences:'))
+        self.consequences_checkboxes = []
+        for value in self.consequences_values:
+            self.consequences_layout.addWidget(QLabel(str(value)))
+            checkbox = QCheckBox(self)
+            self.consequences_checkboxes.append(checkbox)
+            self.consequences_layout.addWidget(checkbox)
+        customize_button = QPushButton('Customize', self)
+        button_style(customize_button)
+        customize_button.clicked.connect(self.customize_consequences)
+        self.consequences_layout.addWidget(customize_button)
+
+    def customize_stress(self):
+        dialog = CustomDialog('Customize Stress', self.stress_values, self)
+        if dialog.exec_():
+            self.stress_values = dialog.get_values()
+            self.add_stress_row()
+
+    def customize_consequences(self):
+        dialog = CustomDialog('Customize Consequences', self.consequences_values, self)
+        if dialog.exec_():
+            self.consequences_values = dialog.get_values()
+            self.add_consequences_row()
 
     def add_aspect(self):
         aspect_layout = QHBoxLayout()
@@ -233,16 +300,13 @@ class CharacterWindow(DefaultWindow):
                     stunt_input = stunt_layout.itemAt(0).widget()
                     file.write(f"Stunt: {stunt_input.text()}\n")
 
+            file.write(f"Stress: {' '.join(str(value) for value in self.stress_values)}\n")
+            file.write(f"StressCheckboxes: {' '.join('1' if cb.isChecked() else '0' for cb in self.stress_checkboxes)}\n")
+            file.write(f"Consequences: {' '.join(str(value) for value in self.consequences_values)}\n")
+            file.write(f"ConsequencesCheckboxes: {' '.join('1' if cb.isChecked() else '0' for cb in self.consequences_checkboxes)}\n")
+
             file.write(f"Notes: {self.notes_input.toPlainText()}\n")
             file.write(f"ImagePath: {self.image_path}\n")
-
-            file.write("Stress: ")
-            file.write("".join(['1' if cb.isChecked() else '0' for cb in self.stress_checkboxes]))
-            file.write("\n")
-
-            file.write("Consequences: ")
-            file.write("".join(['1' if cb.isChecked() else '0' for cb in self.consequences_checkboxes]))
-            file.write("\n")
         
         if not suppress_message:
             QMessageBox.information(self, 'Info', f'Contents saved to {file_path}')
@@ -265,29 +329,44 @@ class CharacterWindow(DefaultWindow):
             self.high_concept_input.setText(lines[10].split(": ")[1].strip())
             self.trouble_input.setText(lines[11].split(": ")[1].strip())
             
-            index = 12
+            line_index = 12
             for line in lines[12:]:
                 if line.startswith("Aspect:"):
                     aspect_text = line.split(": ")[1].strip()
                     self.add_aspect_with_text(aspect_text)
+                    line_index += 1
                 elif line.startswith("Stunt:"):
                     stunt_text = line.split(": ")[1].strip()
                     self.add_stunt_with_text(stunt_text)
-                elif line.startswith("Notes:"):
-                    self.notes_input.setPlainText(line.split(": ", 1)[1].strip())
-                elif line.startswith("ImagePath:"):
-                    self.image_path = line.split(": ", 1)[1].strip()
-                    if self.image_path:
-                        pixmap = QPixmap(self.image_path)
-                        self.image_label.setPixmap(pixmap.scaled(100, 100, Qt.KeepAspectRatio))
-                elif line.startswith("Stress:"):
-                    stress_values = line.split(": ")[1].strip()
-                    for i, value in enumerate(stress_values):
-                        self.stress_checkboxes[i].setChecked(value == '1')
-                elif line.startswith("Consequences:"):
-                    consequences_values = line.split(": ")[1].strip()
-                    for i, value in enumerate(consequences_values):
-                        self.consequences_checkboxes[i].setChecked(value == '1')
+                    line_index += 1
+                else:
+                    break
+
+            stress_line = lines[line_index].split(": ")[1].strip().split()
+            self.stress_values = [int(value) for value in stress_line]
+            self.add_stress_row()
+            line_index += 1
+            
+            stress_checkboxes_line = lines[line_index].split(": ")[1].strip().split()
+            for i, cb_value in enumerate(stress_checkboxes_line):
+                self.stress_checkboxes[i].setChecked(cb_value == '1')
+            line_index += 1
+
+            consequences_line = lines[line_index].split(": ")[1].strip().split()
+            self.consequences_values = [int(value) for value in consequences_line]
+            self.add_consequences_row()
+            line_index += 1
+            
+            consequences_checkboxes_line = lines[line_index].split(": ")[1].strip().split()
+            for i, cb_value in enumerate(consequences_checkboxes_line):
+                self.consequences_checkboxes[i].setChecked(cb_value == '1')
+            line_index += 1
+
+            self.notes_input.setPlainText(lines[line_index].split(": ", 1)[1].strip())
+            self.image_path = lines[line_index + 1].split(": ", 1)[1].strip()
+            if self.image_path:
+                pixmap = QPixmap(self.image_path)
+                self.image_label.setPixmap(pixmap.scaled(100, 100, Qt.KeepAspectRatio))
 
     def clear_layout(self, layout):
         while layout.count():
@@ -322,6 +401,3 @@ class CharacterWindow(DefaultWindow):
         stunt_layout.addWidget(remove_button)
         
         self.stunts_list_layout.addLayout(stunt_layout)
-
-    def get_save_folder(self):
-        return "Characters"

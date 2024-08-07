@@ -13,5 +13,9 @@ Trouble: Not the sharpest tool in the cargo.
 Aspect: Inherently evil and proud of it.
 Stunt: Can disguise his ship as a marine ship.
 Stunt: Incredible aim with his pistol.
+Stress: 1 2 3
+StressCheckboxes: 0 1 0
+Consequences: 2 4 6
+ConsequencesCheckboxes: 0 1 1
 Notes: Famous pirate captain.
 ImagePath: /home/ted/Desktop/Fate_Accelerated_GUI_Tool/pictures/blackbeard.png
