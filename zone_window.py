@@ -177,7 +177,7 @@ class ZoneWindow(DefaultWindow):
                 if window_class == ZoneWindow:
                     window_instance = window_class(self.mdi_area)
                 else:
-                    window_instance = window_class()
+                    window_instance = window_class(add_default_rows=False) if window_class == ObstacleWindow else window_class()
                 window_instance.load_contents(file_path)
                 sub_window.setWidget(window_instance)
                 sub_window.setAttribute(Qt.WA_DeleteOnClose)

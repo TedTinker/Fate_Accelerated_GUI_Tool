@@ -1,5 +1,5 @@
 import os
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QWidget, QMessageBox, QFileDialog, QLabel, QSpinBox
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QWidget, QMessageBox, QFileDialog, QLabel
 from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QPixmap
 from default_window import DefaultWindow, button_style
@@ -48,9 +48,8 @@ class ObstacleWindow(DefaultWindow):
         agent_input.setText(agent)
         row_layout.addWidget(agent_input)
 
-        score_input = QSpinBox(self)
-        score_input.setRange(-9999, 9999)
-        score_input.setValue(int(score))
+        score_input = QLineEdit(self)
+        score_input.setText(score)
         row_layout.addWidget(score_input)
 
         remove_button = QPushButton('Remove', self)
@@ -99,7 +98,7 @@ class ObstacleWindow(DefaultWindow):
                 if row_widget:
                     agent_input = row_widget.layout().itemAt(0).widget()
                     score_input = row_widget.layout().itemAt(1).widget()
-                    file.write(f"{agent_input.text()}:{score_input.value()}\n")
+                    file.write(f"{agent_input.text()}:{score_input.text()}\n")
             file.write(f"Notes: {self.notes_input.toPlainText()}\n")
             file.write(f"ImagePath: {self.image_path}\n")
         
@@ -107,6 +106,9 @@ class ObstacleWindow(DefaultWindow):
             QMessageBox.information(self, 'Info', f'Contents saved to {file_path}')
 
     def load_contents(self, file_path):
+        # Clear existing rows before loading
+        self.clear_rows()
+
         with open(file_path, 'r') as file:
             lines = file.readlines()
             self.name_input.setText(lines[1].split(": ")[1].strip())
@@ -119,5 +121,8 @@ class ObstacleWindow(DefaultWindow):
                 pixmap = QPixmap(self.image_path)
                 self.image_label.setPixmap(pixmap.scaled(100, 100, Qt.KeepAspectRatio))
 
-    def get_save_folder(self):
-        return "Obstacles"
+    def clear_rows(self):
+        while self.rows_layout.count():
+            row = self.rows_layout.takeAt(0)
+            if row.widget():
+                row.widget().deleteLater()

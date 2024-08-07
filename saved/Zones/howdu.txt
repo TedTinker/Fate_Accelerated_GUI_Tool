@@ -1,5 +1,0 @@
-WindowType: ZoneWindow
-Name: howdu
-Leroy Alexanderson
-Notes: 
-ImagePath: 
