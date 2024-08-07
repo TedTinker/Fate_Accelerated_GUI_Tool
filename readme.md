@@ -6,6 +6,7 @@ This is a customizable GUI tool designed for managing various aspects of the Fat
 
 ## Features
 
+- **Advantage Window**: Track advantage and floating aspects for use.
 - **Character Window**: Manage character details, including aspects, stunts, and approaches.
 - **Obstacle Window**: Manage obstacles with agents and scores.
 - **Zone Window**: Create zones and associate them with other windows. Zones are linked to their contents.
