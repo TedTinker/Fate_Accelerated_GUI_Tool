@@ -1,5 +1,5 @@
 import os 
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QMessageBox, QFileDialog, QCheckBox
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QMessageBox, QFileDialog, QCheckBox, QSpinBox
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt, pyqtSlot
 from default_window import DefaultWindow, button_style
@@ -40,28 +40,28 @@ class CharacterWindow(DefaultWindow):
         skills_inputs_layout = QHBoxLayout()
         skills_layout.addLayout(skills_inputs_layout)
         
-        self.careful_input = QLineEdit(self)
-        self.careful_input.setText('0')
+        self.careful_input = QSpinBox(self)
+        self.careful_input.setRange(-9999, 9999)
         skills_inputs_layout.addWidget(self.careful_input)
         
-        self.clever_input = QLineEdit(self)
-        self.clever_input.setText('0')
+        self.clever_input = QSpinBox(self)
+        self.clever_input.setRange(-9999, 9999)
         skills_inputs_layout.addWidget(self.clever_input)
         
-        self.flashy_input = QLineEdit(self)
-        self.flashy_input.setText('0')
+        self.flashy_input = QSpinBox(self)
+        self.flashy_input.setRange(-9999, 9999)
         skills_inputs_layout.addWidget(self.flashy_input)
         
-        self.forceful_input = QLineEdit(self)
-        self.forceful_input.setText('0')
+        self.forceful_input = QSpinBox(self)
+        self.forceful_input.setRange(-9999, 9999)
         skills_inputs_layout.addWidget(self.forceful_input)
         
-        self.quick_input = QLineEdit(self)
-        self.quick_input.setText('0')
+        self.quick_input = QSpinBox(self)
+        self.quick_input.setRange(-9999, 9999)
         skills_inputs_layout.addWidget(self.quick_input)
         
-        self.sneaky_input = QLineEdit(self)
-        self.sneaky_input.setText('0')
+        self.sneaky_input = QSpinBox(self)
+        self.sneaky_input.setRange(-9999, 9999)
         skills_inputs_layout.addWidget(self.sneaky_input)
         
         # Aspects
@@ -210,12 +210,12 @@ class CharacterWindow(DefaultWindow):
             file.write(f"Name: {name}\n")
             file.write(f"Fate Points: {self.fate_points_input.text()}\n")
             file.write(f"Refresh: {self.refresh_input.text()}\n")
-            file.write(f"Careful: {self.careful_input.text()}\n")
-            file.write(f"Clever: {self.clever_input.text()}\n")
-            file.write(f"Flashy: {self.flashy_input.text()}\n")
-            file.write(f"Forceful: {self.forceful_input.text()}\n")
-            file.write(f"Quick: {self.quick_input.text()}\n")
-            file.write(f"Sneaky: {self.sneaky_input.text()}\n")
+            file.write(f"Careful: {self.careful_input.value()}\n")
+            file.write(f"Clever: {self.clever_input.value()}\n")
+            file.write(f"Flashy: {self.flashy_input.value()}\n")
+            file.write(f"Forceful: {self.forceful_input.value()}\n")
+            file.write(f"Quick: {self.quick_input.value()}\n")
+            file.write(f"Sneaky: {self.sneaky_input.value()}\n")
             
             file.write(f"High Concept: {self.high_concept_input.text()}\n")
             file.write(f"Trouble: {self.trouble_input.text()}\n")
@@ -255,12 +255,12 @@ class CharacterWindow(DefaultWindow):
             self.name_input.setText(lines[1].split(": ")[1].strip())
             self.fate_points_input.setText(lines[2].split(": ")[1].strip())
             self.refresh_input.setText(lines[3].split(": ")[1].strip())
-            self.careful_input.setText(lines[4].split(": ")[1].strip())
-            self.clever_input.setText(lines[5].split(": ")[1].strip())
-            self.flashy_input.setText(lines[6].split(": ")[1].strip())
-            self.forceful_input.setText(lines[7].split(": ")[1].strip())
-            self.quick_input.setText(lines[8].split(": ")[1].strip())
-            self.sneaky_input.setText(lines[9].split(": ")[1].strip())
+            self.careful_input.setValue(int(lines[4].split(": ")[1].strip()))
+            self.clever_input.setValue(int(lines[5].split(": ")[1].strip()))
+            self.flashy_input.setValue(int(lines[6].split(": ")[1].strip()))
+            self.forceful_input.setValue(int(lines[7].split(": ")[1].strip()))
+            self.quick_input.setValue(int(lines[8].split(": ")[1].strip()))
+            self.sneaky_input.setValue(int(lines[9].split(": ")[1].strip()))
             self.high_concept_input.setText(lines[10].split(": ")[1].strip())
             self.trouble_input.setText(lines[11].split(": ")[1].strip())
             
