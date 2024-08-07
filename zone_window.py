@@ -169,32 +169,19 @@ class ZoneWindow(DefaultWindow):
         return any(window.widget().name_input.text() == window_name for window in self.mdi_area.subWindowList())
 
     def load_window(self, window_name):
-        # Determine the save folder based on the window name
-        for window_class in [CharacterWindow, ObstacleWindow, AdvantageWindow, ZoneWindow]:
-            save_folder = os.path.join("saved", window_class().get_save_folder())
+        for window_class, folder_name in [(CharacterWindow, "Characters"), (ObstacleWindow, "Obstacles"), (AdvantageWindow, "Advantages"), (ZoneWindow, "Zones")]:
+            save_folder = os.path.join("saved", folder_name)
             file_path = os.path.join(save_folder, f"{window_name}.txt")
             if os.path.exists(file_path):
-                with open(file_path, 'r') as file:
-                    window_type = file.readline().split(": ")[1].strip()
+                sub_window = QMdiSubWindow()
+                if window_class == ZoneWindow:
+                    window_instance = window_class(self.mdi_area)
+                else:
+                    window_instance = window_class()
+                window_instance.load_contents(file_path)
+                sub_window.setWidget(window_instance)
+                sub_window.setAttribute(Qt.WA_DeleteOnClose)
+                self.mdi_area.addSubWindow(sub_window)
+                sub_window.show()
+                return  # Exit after loading the correct window
 
-                    sub_window = QMdiSubWindow()
-                    if window_type == "ObstacleWindow":
-                        window_instance = ObstacleWindow(add_default_rows=False)
-                    elif window_type == "CharacterWindow":
-                        window_instance = CharacterWindow()
-                    elif window_type == "ZoneWindow":
-                        window_instance = ZoneWindow(self.mdi_area)
-                    elif window_type == "AdvantageWindow":
-                        window_instance = AdvantageWindow()
-                    else:
-                        window_instance = DefaultWindow()
-
-                    window_instance.load_contents(file_path)
-                    sub_window.setWidget(window_instance)
-                    sub_window.setAttribute(Qt.WA_DeleteOnClose)
-                    self.mdi_area.addSubWindow(sub_window)
-                    sub_window.show()
-                break
-
-    def get_save_folder(self):
-        return "Zones"
