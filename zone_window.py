@@ -38,6 +38,15 @@ class ZoneWindow(DefaultWindow):
 
         self.image_path = ""
 
+        self.name_input.textChanged.connect(self.update_window_title)
+
+    def update_window_title(self):
+        name = self.name_input.text()
+        if name:
+            self.setWindowTitle(f"{name} (Zone)")
+        else:
+            self.setWindowTitle('Zone Window')
+
     def toggle_notes(self):
         visible = not self.notes_input.isVisible()
         self.notes_input.setVisible(visible)
@@ -164,6 +173,7 @@ class ZoneWindow(DefaultWindow):
             if self.image_path:
                 pixmap = QPixmap(self.image_path)
                 self.image_label.setPixmap(pixmap.scaled(100, 100, Qt.KeepAspectRatio))
+        self.update_window_title()
 
     def is_window_open(self, window_name):
         return any(window.widget().name_input.text() == window_name for window in self.mdi_area.subWindowList())
@@ -184,4 +194,3 @@ class ZoneWindow(DefaultWindow):
                 self.mdi_area.addSubWindow(sub_window)
                 sub_window.show()
                 return  # Exit after loading the correct window
-

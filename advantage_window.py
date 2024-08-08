@@ -22,6 +22,15 @@ class AdvantageWindow(DefaultWindow):
         self.choose_image_button.setVisible(True)
         self.notes_toggle_button.setText('Hide Notes and Image')
 
+        self.name_input.textChanged.connect(self.update_window_title)
+
+    def update_window_title(self):
+        name = self.name_input.text()
+        if name:
+            self.setWindowTitle(f"{name} (Advantage)")
+        else:
+            self.setWindowTitle('Advantage Window')
+
     def toggle_notes(self):
         visible = not self.notes_input.isVisible()
         self.notes_input.setVisible(visible)
@@ -67,6 +76,7 @@ class AdvantageWindow(DefaultWindow):
             if self.image_path:
                 pixmap = QPixmap(self.image_path)
                 self.image_label.setPixmap(pixmap.scaled(100, 100, Qt.KeepAspectRatio))
+        self.update_window_title()
 
     def get_save_folder(self):
         return "Advantages"

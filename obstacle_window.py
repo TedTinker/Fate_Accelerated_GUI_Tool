@@ -39,6 +39,15 @@ class ObstacleWindow(DefaultWindow):
         self.choose_image_button.setVisible(True)
         self.notes_toggle_button.setText('Hide Notes and Image')
 
+        self.name_input.textChanged.connect(self.update_window_title)
+
+    def update_window_title(self):
+        name = self.name_input.text()
+        if name:
+            self.setWindowTitle(f"{name} (Obstacle)")
+        else:
+            self.setWindowTitle('Obstacle Window')
+
     def add_row(self, agent="Obstacle", score=0):
         row_widget = QWidget()
         row_layout = QHBoxLayout()
@@ -50,7 +59,7 @@ class ObstacleWindow(DefaultWindow):
 
         score_input = QSpinBox(self)
         score_input.setValue(score)
-        score_input.setRange(-2147483647, 2147483647)  # Effectively no limits
+        score_input.setRange(-1000000, 1000000)  # No minimum or maximum limit
         row_layout.addWidget(score_input)
 
         remove_button = QPushButton('Remove', self)
@@ -107,7 +116,6 @@ class ObstacleWindow(DefaultWindow):
             QMessageBox.information(self, 'Info', f'Contents saved to {file_path}')
 
     def load_contents(self, file_path):
-        # Clear existing rows before loading
         self.clear_rows()
 
         with open(file_path, 'r') as file:
@@ -121,6 +129,7 @@ class ObstacleWindow(DefaultWindow):
             if self.image_path:
                 pixmap = QPixmap(self.image_path)
                 self.image_label.setPixmap(pixmap.scaled(100, 100, Qt.KeepAspectRatio))
+        self.update_window_title()
 
     def clear_rows(self):
         while self.rows_layout.count():

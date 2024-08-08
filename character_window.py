@@ -61,14 +61,14 @@ class CharacterWindow(DefaultWindow):
         
         fate_refresh_layout.addWidget(QLabel('Fate Points'))
         self.fate_points_input = QSpinBox(self)
-        self.fate_points_input.setValue(3)
         self.fate_points_input.setRange(0, 1000)
+        self.fate_points_input.setValue(3)
         fate_refresh_layout.addWidget(self.fate_points_input)
         
         fate_refresh_layout.addWidget(QLabel('Refresh'))
         self.refresh_input = QSpinBox(self)
-        self.refresh_input.setValue(3)
         self.refresh_input.setRange(0, 1000)
+        self.refresh_input.setValue(3)
         fate_refresh_layout.addWidget(self.refresh_input)
         
         # Approaches
@@ -167,6 +167,15 @@ class CharacterWindow(DefaultWindow):
         self.image_label.setVisible(True)
         self.choose_image_button.setVisible(True)
         self.notes_toggle_button.setText('Hide Notes and Image')
+
+        self.name_input.textChanged.connect(self.update_window_title)
+
+    def update_window_title(self):
+        name = self.name_input.text()
+        if name:
+            self.setWindowTitle(f"{name} (Character)")
+        else:
+            self.setWindowTitle('Character Window')
 
     def add_stress_row(self):
         self.clear_layout(self.stress_layout)
@@ -369,6 +378,7 @@ class CharacterWindow(DefaultWindow):
             if self.image_path:
                 pixmap = QPixmap(self.image_path)
                 self.image_label.setPixmap(pixmap.scaled(100, 100, Qt.KeepAspectRatio))
+        self.update_window_title()
 
     def clear_layout(self, layout):
         while layout.count():
