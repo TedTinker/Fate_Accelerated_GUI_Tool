@@ -60,13 +60,15 @@ class CharacterWindow(DefaultWindow):
         self.layout.addLayout(fate_refresh_layout)
         
         fate_refresh_layout.addWidget(QLabel('Fate Points'))
-        self.fate_points_input = QLineEdit(self)
-        self.fate_points_input.setText('3')
+        self.fate_points_input = QSpinBox(self)
+        self.fate_points_input.setValue(3)
+        self.fate_points_input.setRange(0, 1000)
         fate_refresh_layout.addWidget(self.fate_points_input)
         
         fate_refresh_layout.addWidget(QLabel('Refresh'))
-        self.refresh_input = QLineEdit(self)
-        self.refresh_input.setText('3')
+        self.refresh_input = QSpinBox(self)
+        self.refresh_input.setValue(3)
+        self.refresh_input.setRange(0, 1000)
         fate_refresh_layout.addWidget(self.refresh_input)
         
         # Approaches
@@ -276,8 +278,8 @@ class CharacterWindow(DefaultWindow):
         with open(file_path, 'w') as file:
             file.write(f"WindowType: CharacterWindow\n")
             file.write(f"Name: {name}\n")
-            file.write(f"Fate Points: {self.fate_points_input.text()}\n")
-            file.write(f"Refresh: {self.refresh_input.text()}\n")
+            file.write(f"Fate Points: {self.fate_points_input.value()}\n")
+            file.write(f"Refresh: {self.refresh_input.value()}\n")
             file.write(f"Careful: {self.careful_input.value()}\n")
             file.write(f"Clever: {self.clever_input.value()}\n")
             file.write(f"Flashy: {self.flashy_input.value()}\n")
@@ -318,8 +320,8 @@ class CharacterWindow(DefaultWindow):
         with open(file_path, 'r') as file:
             lines = file.readlines()
             self.name_input.setText(lines[1].split(": ")[1].strip())
-            self.fate_points_input.setText(lines[2].split(": ")[1].strip())
-            self.refresh_input.setText(lines[3].split(": ")[1].strip())
+            self.fate_points_input.setValue(int(lines[2].split(": ")[1].strip()))
+            self.refresh_input.setValue(int(lines[3].split(": ")[1].strip()))
             self.careful_input.setValue(int(lines[4].split(": ")[1].strip()))
             self.clever_input.setValue(int(lines[5].split(": ")[1].strip()))
             self.flashy_input.setValue(int(lines[6].split(": ")[1].strip()))

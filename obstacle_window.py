@@ -1,5 +1,5 @@
 import os
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QWidget, QMessageBox, QFileDialog, QLabel
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QWidget, QMessageBox, QFileDialog, QLabel, QSpinBox
 from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QPixmap
 from default_window import DefaultWindow, button_style
@@ -20,12 +20,12 @@ class ObstacleWindow(DefaultWindow):
         self.layout.addLayout(self.rows_layout)
 
         if add_default_rows:
-            self.add_row("Obstacle", "0")
-            self.add_row("", "0")
+            self.add_row("Obstacle", 0)
+            self.add_row("", 0)
         
         self.new_row_button = QPushButton('New Row', self)
         button_style(self.new_row_button)
-        self.new_row_button.clicked.connect(lambda: self.add_row("", "0"))
+        self.new_row_button.clicked.connect(lambda: self.add_row("", 0))
         self.layout.addWidget(self.new_row_button)
 
         self.notes_toggle_button.setParent(None)
@@ -39,7 +39,7 @@ class ObstacleWindow(DefaultWindow):
         self.choose_image_button.setVisible(True)
         self.notes_toggle_button.setText('Hide Notes and Image')
 
-    def add_row(self, agent="Obstacle", score="0"):
+    def add_row(self, agent="Obstacle", score=0):
         row_widget = QWidget()
         row_layout = QHBoxLayout()
         row_widget.setLayout(row_layout)
@@ -48,8 +48,9 @@ class ObstacleWindow(DefaultWindow):
         agent_input.setText(agent)
         row_layout.addWidget(agent_input)
 
-        score_input = QLineEdit(self)
-        score_input.setText(score)
+        score_input = QSpinBox(self)
+        score_input.setValue(score)
+        score_input.setRange(-2147483647, 2147483647)  # Effectively no limits
         row_layout.addWidget(score_input)
 
         remove_button = QPushButton('Remove', self)
@@ -98,7 +99,7 @@ class ObstacleWindow(DefaultWindow):
                 if row_widget:
                     agent_input = row_widget.layout().itemAt(0).widget()
                     score_input = row_widget.layout().itemAt(1).widget()
-                    file.write(f"{agent_input.text()}:{score_input.text()}\n")
+                    file.write(f"{agent_input.text()}:{score_input.value()}\n")
             file.write(f"Notes: {self.notes_input.toPlainText()}\n")
             file.write(f"ImagePath: {self.image_path}\n")
         
@@ -114,7 +115,7 @@ class ObstacleWindow(DefaultWindow):
             self.name_input.setText(lines[1].split(": ")[1].strip())
             for line in lines[2:-2]:
                 agent, score = line.strip().split(':')
-                self.add_row(agent, score)
+                self.add_row(agent, int(score))
             self.notes_input.setPlainText(lines[-2].split(": ", 1)[1].strip())
             self.image_path = lines[-1].split(": ", 1)[1].strip()
             if self.image_path:
