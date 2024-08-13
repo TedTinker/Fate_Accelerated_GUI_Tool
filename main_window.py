@@ -1,3 +1,4 @@
+#%%
 import os
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QAction, QMdiArea, QMdiSubWindow, QWidget, QComboBox, QToolBar
 from PyQt5.QtCore import Qt, QTimer, QPoint
@@ -34,12 +35,14 @@ class ConnectionOverlay(QWidget):
                         connected_window = valid_windows[connected_window_name]
                         connected_center = self._get_center_point(connected_window)
                         
-                        if isinstance(connected_window.widget(), CharacterWindow):
-                            pen = QPen(Qt.black, 2)
+                        if isinstance(connected_window.widget(), AdvantageWindow):
+                            pen = QPen(QColor(0, 255, 255, 255), 2)
+                        elif isinstance(connected_window.widget(), CharacterWindow):
+                            pen = QPen(QColor(0, 255, 0, 255), 2)
                         elif isinstance(connected_window.widget(), ObstacleWindow):
-                            pen = QPen(Qt.white, 2)
-                        elif isinstance(connected_window.widget(), AdvantageWindow):
-                            pen = QPen(Qt.yellow, 2)
+                            pen = QPen(QColor(0, 0, 255, 255), 2)
+                        elif isinstance(connected_window.widget(), ZoneWindow):
+                            pen = QPen(Qt.black, 2)
                         else:
                             pen = QPen(Qt.black, 2)
                         
@@ -223,3 +226,5 @@ class MainWindow(QMainWindow):
                 self.zone_connections[sub_window] = connected_windows
         self.overlay.update_connections(self.zone_connections)
         self.update()
+
+# %%

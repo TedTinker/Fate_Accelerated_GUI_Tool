@@ -71,7 +71,7 @@ class ZoneWindow(DefaultWindow):
 
     def update_dropdown(self):
         current_names = set(self.get_all_row_names())
-        all_window_names = [window.widget().name_input.text() for window in self.mdi_area.subWindowList() if window.widget().name_input.text() and window.widget() != self and not isinstance(window.widget(), ZoneWindow)]
+        all_window_names = [window.widget().name_input.text() for window in self.mdi_area.subWindowList() if window.widget().name_input.text() and window.widget() != self]
         
         available_names = [name for name in all_window_names if name not in current_names]
         
