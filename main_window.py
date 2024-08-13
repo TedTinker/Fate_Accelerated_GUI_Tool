@@ -2,7 +2,7 @@
 import os
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QAction, QMdiArea, QMdiSubWindow, QWidget, QComboBox, QToolBar
 from PyQt5.QtCore import Qt, QTimer, QPoint
-from PyQt5.QtGui import QPainter, QPen, QColor
+from PyQt5.QtGui import QPainter, QPen, QColor, QLinearGradient
 from default_window import DefaultWindow
 from character_window import CharacterWindow
 from obstacle_window import ObstacleWindow
@@ -20,6 +20,13 @@ class ConnectionOverlay(QWidget):
         self.connections = connections
         self.update()
 
+    def interpolate_color(self, color1, color2, fraction):
+        r = color1.red() + (color2.red() - color1.red()) * fraction
+        g = color1.green() + (color2.green() - color1.green()) * fraction
+        b = color1.blue() + (color2.blue() - color1.blue()) * fraction
+        a = color1.alpha() + (color2.alpha() - color1.alpha()) * fraction
+        return QColor(int(r), int(g), int(b), int(a))
+
     def paintEvent(self, event):
         painter = QPainter(self)
         
@@ -34,17 +41,26 @@ class ConnectionOverlay(QWidget):
                     if connected_window_name in valid_windows:
                         connected_window = valid_windows[connected_window_name]
                         connected_center = self._get_center_point(connected_window)
-                        
+
                         if isinstance(connected_window.widget(), AdvantageWindow):
-                            pen = QPen(QColor(0, 255, 255, 255), 2)
+                            target_color = QColor(0, 255, 255, 255)
                         elif isinstance(connected_window.widget(), CharacterWindow):
-                            pen = QPen(QColor(0, 255, 0, 255), 2)
+                            target_color = QColor(0, 255, 0, 255)
                         elif isinstance(connected_window.widget(), ObstacleWindow):
-                            pen = QPen(QColor(0, 0, 255, 255), 2)
+                            target_color = QColor(100, 100, 255, 255)
                         elif isinstance(connected_window.widget(), ZoneWindow):
-                            pen = QPen(Qt.black, 2)
+                            target_color = QColor(224, 176, 255, 255)
                         else:
-                            pen = QPen(Qt.black, 2)
+                            target_color = QColor(Qt.black)
+
+                        intermediate_color = self.interpolate_color(QColor(Qt.black), target_color, 0.5)
+
+                        gradient = QLinearGradient(zone_center, connected_center)
+                        gradient.setColorAt(0, intermediate_color)
+                        gradient.setColorAt(0.3, intermediate_color)  # Intermediate color
+                        gradient.setColorAt(.7, target_color)
+                        gradient.setColorAt(1, target_color)
+                        pen = QPen(gradient, 2)
                         
                         painter.setPen(pen)
                         painter.setBrush(QColor(0, 0, 255, 127))  
@@ -65,6 +81,7 @@ class ConnectionOverlay(QWidget):
             return sub_window and sub_window.widget() and sub_window.isVisible() and not sub_window.isMinimized()
         except RuntimeError:
             return False
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
