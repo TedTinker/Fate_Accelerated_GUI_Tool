@@ -58,8 +58,8 @@ class ObstacleWindow(DefaultWindow):
         row_layout.addWidget(agent_input)
 
         score_input = QSpinBox(self)
+        score_input.setRange(-9999, 9999)
         score_input.setValue(score)
-        score_input.setRange(-1000000, 1000000)  # No minimum or maximum limit
         row_layout.addWidget(score_input)
 
         remove_button = QPushButton('Remove', self)
@@ -109,7 +109,8 @@ class ObstacleWindow(DefaultWindow):
                     agent_input = row_widget.layout().itemAt(0).widget()
                     score_input = row_widget.layout().itemAt(1).widget()
                     file.write(f"{agent_input.text()}:{score_input.value()}\n")
-            file.write(f"Notes: {self.notes_input.toPlainText()}\n")
+            notes = self.notes_input.toPlainText().replace('\n', '\\n')
+            file.write(f"Notes: {notes}\n")
             file.write(f"ImagePath: {self.image_path}\n")
         
         if not suppress_message:
@@ -124,12 +125,12 @@ class ObstacleWindow(DefaultWindow):
             for line in lines[2:-2]:
                 agent, score = line.strip().split(':')
                 self.add_row(agent, int(score))
-            self.notes_input.setPlainText(lines[-2].split(": ", 1)[1].strip())
+            notes = lines[-2].split(": ", 1)[1].strip().replace('\\n', '\n')
+            self.notes_input.setPlainText(notes)
             self.image_path = lines[-1].split(": ", 1)[1].strip()
             if self.image_path:
                 pixmap = QPixmap(self.image_path)
                 self.image_label.setPixmap(pixmap.scaled(100, 100, Qt.KeepAspectRatio))
-        self.update_window_title()
 
     def clear_rows(self):
         while self.rows_layout.count():

@@ -1,5 +1,5 @@
 import os
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QWidget, QMessageBox, QFileDialog, QLabel
+from PyQt5.QtWidgets import QVBoxLayout, QPushButton, QMessageBox, QFileDialog, QLabel
 from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QPixmap
 from default_window import DefaultWindow, button_style
@@ -61,7 +61,8 @@ class AdvantageWindow(DefaultWindow):
         with open(file_path, 'w') as file:
             file.write(f"WindowType: AdvantageWindow\n")
             file.write(f"Name: {name}\n")
-            file.write(f"Notes: {self.notes_input.toPlainText()}\n")
+            notes = self.notes_input.toPlainText().replace('\n', '\\n')
+            file.write(f"Notes: {notes}\n")
             file.write(f"ImagePath: {self.image_path}\n")
         
         if not suppress_message:
@@ -71,12 +72,12 @@ class AdvantageWindow(DefaultWindow):
         with open(file_path, 'r') as file:
             lines = file.readlines()
             self.name_input.setText(lines[1].split(": ")[1].strip())
-            self.notes_input.setPlainText(lines[2].split(": ", 1)[1].strip())
+            notes = lines[2].split(": ", 1)[1].strip().replace('\\n', '\n')
+            self.notes_input.setPlainText(notes)
             self.image_path = lines[3].split(": ", 1)[1].strip()
             if self.image_path:
                 pixmap = QPixmap(self.image_path)
                 self.image_label.setPixmap(pixmap.scaled(100, 100, Qt.KeepAspectRatio))
-        self.update_window_title()
 
     def get_save_folder(self):
         return "Advantages"

@@ -153,7 +153,8 @@ class ZoneWindow(DefaultWindow):
                 if row_widget:
                     name_label = row_widget.layout().itemAt(0).widget()
                     file.write(f"{name_label.text()}\n")
-            file.write(f"Notes: {self.notes_input.toPlainText()}\n")
+            notes = self.notes_input.toPlainText().replace('\n', '\\n')
+            file.write(f"Notes: {notes}\n")
             file.write(f"ImagePath: {self.image_path}\n")
         
         if not suppress_message:
@@ -168,12 +169,12 @@ class ZoneWindow(DefaultWindow):
                 if not self.is_window_open(window_name):
                     self.load_window(window_name)
                 self.add_row(window_name)
-            self.notes_input.setPlainText(lines[-2].split(": ", 1)[1].strip())
+            notes = lines[-2].split(": ", 1)[1].strip().replace('\\n', '\n')
+            self.notes_input.setPlainText(notes)
             self.image_path = lines[-1].split(": ", 1)[1].strip()
             if self.image_path:
                 pixmap = QPixmap(self.image_path)
                 self.image_label.setPixmap(pixmap.scaled(100, 100, Qt.KeepAspectRatio))
-        self.update_window_title()
 
     def is_window_open(self, window_name):
         return any(window.widget().name_input.text() == window_name for window in self.mdi_area.subWindowList())

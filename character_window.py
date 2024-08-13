@@ -316,7 +316,8 @@ class CharacterWindow(DefaultWindow):
             file.write(f"Consequences: {' '.join(str(value) for value in self.consequences_values)}\n")
             file.write(f"ConsequencesCheckboxes: {' '.join('1' if cb.isChecked() else '0' for cb in self.consequences_checkboxes)}\n")
 
-            file.write(f"Notes: {self.notes_input.toPlainText()}\n")
+            notes = self.notes_input.toPlainText().replace('\n', '\\n')
+            file.write(f"Notes: {notes}\n")
             file.write(f"ImagePath: {self.image_path}\n")
         
         if not suppress_message:
@@ -373,12 +374,12 @@ class CharacterWindow(DefaultWindow):
                 self.consequences_checkboxes[i].setChecked(cb_value == '1')
             line_index += 1
 
-            self.notes_input.setPlainText(lines[line_index].split(": ", 1)[1].strip())
+            notes = lines[line_index].split(": ", 1)[1].strip().replace('\\n', '\n')
+            self.notes_input.setPlainText(notes)
             self.image_path = lines[line_index + 1].split(": ", 1)[1].strip()
             if self.image_path:
                 pixmap = QPixmap(self.image_path)
                 self.image_label.setPixmap(pixmap.scaled(100, 100, Qt.KeepAspectRatio))
-        self.update_window_title()
 
     def clear_layout(self, layout):
         while layout.count():
